@@ -23,7 +23,9 @@ print ("Area: " + str(area))
 print ("Perimeter: " + str(perimeter))
 
 #B5
-#doing something like int("hello") should give a ValueError
-# so if user enters a string where an int or float is expected
-# the program will terminate with the error
-# (since we are not handling the exception)
+'''
+doing something like int("hello") should give a ValueError
+ so if user enters a string where an int or float is expected
+ the program will terminate with the error
+ (since we are not handling the exception)
+'''
