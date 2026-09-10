@@ -23,7 +23,7 @@ while True:
             selected = num
         except:
             print("Not found")
-    if selected != None and selected >= 0 and selected <= len(menu):
+    if selected != None and selected >= 0 and selected < len(menu):
         if menu[selected] == "Quit":
             break
         else:
