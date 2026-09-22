@@ -1,9 +1,9 @@
-#F1
+#E1
 class Teacher:
     def __init__(self, name):
         self.name = name
 
-#F2, F3, F5, F6
+#E2, E3, E5, E6
 class Student:
     def __init__(self, name):
         self.name = name
@@ -23,9 +23,9 @@ course.add_student(Student("Ada"))
 course.add_student(Student("Bob"))
 course.add_student(Student("Cecil"))
 
-#F4
+#E4
 print(course.name, course.teacher.name)
 
-#F7
+#E7
 for student in course.students:
     print(student.name)
