@@ -16,7 +16,7 @@ class Student:
         return "FAIL"
 
 class Course:
-    def __init__(self, name, teacher, students = []):
+    def __init__(self, name, teacher, students):
         self.name = name
         self.teacher = teacher
         self.students = students

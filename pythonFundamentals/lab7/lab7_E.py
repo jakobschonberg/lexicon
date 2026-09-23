@@ -9,7 +9,7 @@ class Student:
         self.name = name
 
 class Course:
-    def __init__(self, name, teacher, students = []):
+    def __init__(self, name, teacher, students):
         self.name = name
         self.teacher = teacher
         self.students = students
@@ -18,7 +18,7 @@ class Course:
         self.students.append(student)
 
 teacher = Teacher("Aladdin")
-course = Course("Python", teacher)
+course = Course("Python", teacher, [])
 course.add_student(Student("Ada"))
 course.add_student(Student("Bob"))
 course.add_student(Student("Cecil"))

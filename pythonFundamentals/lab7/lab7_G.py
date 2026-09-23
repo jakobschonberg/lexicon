@@ -27,7 +27,7 @@ class Course:
     #class variable for keeping track of which classes this class depends on
     #should be a class variable since its value should be the same for all objects of the class
 
-    def __init__(self, name, teacher, students = []):
+    def __init__(self, name, teacher, students):
         self.name = name
         self.teacher = teacher
         self.students = students
