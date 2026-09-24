@@ -18,7 +18,14 @@ print(computer.brand, computer.cpu.model)
 
 #G5
 #Just because you CAN inherit doesn't mean it's always a good idea to inherit.
+#Inheritance should only be used when the child class describes the parent class in an extending way.
 #Further, maybe we'd like the computer to have 0, 1 or more than 1 CPU, by
 #making Computer inherit CPU we would force it to be a CPU. Meaning it has all attributes and methods of CPU once and only once.
 #That's maybe not what we want.
 #In my experience "HAS-A" architecture is used a lot more than inheritance and rightly so.
+
+#G6
+#Car / Engine (HAS-A)
+#Manager / Employee (IS-A)
+#Course / Teacher (HAS-A)
+#Phone / Device (IS-A)
