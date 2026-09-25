@@ -1,4 +1,5 @@
 from util import clear_screen
+from world import World
 
 class MenuItem:
     def __init__(self, name, id):
@@ -17,6 +18,14 @@ class MainMenu:
 
     def remove_item(self, menu_item_id):
         del self.menu_items[menu_item_id]
+
+def new_game():
+    print(World.player_location)
+    World.tick()
+    
+
+def load():
+    raise NotImplementedError()
 
 menu = MainMenu([
     MenuItem("Start New Game", "new"),
@@ -37,3 +46,13 @@ while choice is None:
             raise(ValueError)
     except Exception as e:
         pass #print(e)
+
+chosen = menu.menu_items[choice].id
+if chosen == "new":
+    new_game()
+elif chosen == "load":
+    load()
+elif chosen == "quit":
+    print("Goodbye")
+
+
