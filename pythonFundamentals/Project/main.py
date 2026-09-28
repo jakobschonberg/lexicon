@@ -32,13 +32,14 @@ def display(location):
         exits[num] = exit
     i = None
     while True:
-        i = input()
         try:
+            i = input()
             i = int(i)
             if i in exits.keys():
-                return exits[i]
+                return exits[i].target_location
         except Exception as e:
-            pass
+            if e is EOFError:
+                break
 
 
 

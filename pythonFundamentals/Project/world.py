@@ -4,6 +4,11 @@ from item import Item, Item_Type
 
 #tile_types = ["forest", "plains", "hills", "ocean"]
 
+class Exit:
+    def __init__(self, name, target_location):
+        self.name = name
+        self.target_location = target_location
+
 class Location:
     def __init__(self, name, type, features, items, exits, description):
         self.name = name
@@ -14,19 +19,29 @@ class Location:
         self.description = description
         
 
-location_1 = Location("Forest", "forest", ["red berries", "mushrooms"], [], [],
-                      "You manage to make your way into the forest, the tall trees provide a welcome shade from the sun," \
-                      "but you realize you are very hungry." \
-                      "You see some red berries as well as some suspisious looking mushrooms. You don't have any bag or" \
+location_2 = Location("Battlefield", "plains", ["corpses"], ["small backpack", "short sword", "dagger", "goblin armor"],
+                      "As you exit the forest into a large open field, something smells really bad.\n" \
+                      "Looking further ahead you notice signs of recent battle. Goblin corpses lie mixed\n" \
+                      "with halfling corpses. Besides some vulture birds, nobody seems to be around.\n" \
+                      "You can loot the corpses if you wish."
+                      )
+exit_1_to_2 = Exit("East", location_2)
+
+location_1 = Location("Forest", "forest", ["red berries", "mushrooms"], [], [exit_1_to_2],
+                      "You manage to make your way into the forest, the tall trees provide a welcome shade from the sun,\n" \
+                      "but you realize you are very hungry.\n" \
+                      "You see some red berries as well as some suspisious looking mushrooms. You don't have any bag or\n" \
                       "backpack to collect food, but you could try and eat some."                      
                       )
 
-start_location = Location("Unkown beach", "beach", [], [], [location_1],
+exit_start_to_1 = Exit("Forest", location_1)
+
+start_location = Location("Unkown beach", "beach", [], [], [exit_start_to_1],
                           "You wake up disoriented...\n" \
                           "You don't recall how you got here, but you seem to be just at the beach,\n" \
                           "just meters away from the ocean. The sun is blasting you from above.\n" \
                           "You look around but see nothing else of note. You decide to get up and head for shelter\n" \
-                          "in a nearby forest."
+                          "in a nearby forest. Judging by the the sun's position you estimate the forest is to the south."
                           )
 
 
