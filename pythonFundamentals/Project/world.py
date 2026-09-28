@@ -1,6 +1,8 @@
-import random
+#import random
+from character import Character
+from item import Item, Item_Type
 
-tile_types = ["forest", "plains", "hills", "ocean"]
+#tile_types = ["forest", "plains", "hills", "ocean"]
 
 class Location:
     def __init__(self, name, type, features, items, exits, description):
@@ -23,6 +25,8 @@ start_location = Location("Unkown beach", "beach", [], [],
 class World:
     world_map = dict()
     player_location = start_location
+    rags = Item("Rags", Item_Type.armor, 0, True)
+    player = Character(10, 20, "Player", [rags])
 
     # def tick():
     #     px, py = World.player_location
