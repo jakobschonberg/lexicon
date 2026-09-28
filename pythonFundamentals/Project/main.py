@@ -23,9 +23,31 @@ class MainMenu:
     def remove_item(self, menu_item_id):
         del self.menu_items[menu_item_id]
 
+def display(location):
+    clear_screen()
+    print(location.description)
+    exits = {}
+    for num, exit in enumerate(location.exits, start = 1):
+        print(f"{num}. {exit.name}")
+        exits[num] = exit
+    i = None
+    while True:
+        i = input()
+        try:
+            i = int(i)
+            if i in exits.keys():
+                return exits[i]
+        except Exception as e:
+            pass
+
+
+
 def new_game():
-    print(World.player_location)
-    World.tick()
+    location = World.player_location
+    while location:
+        location = display(location)
+
+    
     
 
 def load():

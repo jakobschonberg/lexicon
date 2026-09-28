@@ -14,13 +14,22 @@ class Location:
         self.description = description
         
 
-start_location = Location("Unkown beach", "beach", [], [],
-                          "You wake up disoriented..." \
-                          "You don't recall how you got here, but you seem to be just at the beach," \
-                          "just meters away from the ocean. The sun is blasting you from above." \
-                          "You look around but see nothing else of note. You decide to get up and head for shelter" \
+location_1 = Location("Forest", "forest", ["red berries", "mushrooms"], [], [],
+                      "You manage to make your way into the forest, the tall trees provide a welcome shade from the sun," \
+                      "but you realize you are very hungry." \
+                      "You see some red berries as well as some suspisious looking mushrooms. You don't have any bag or" \
+                      "backpack to collect food, but you could try and eat some."                      
+                      )
+
+start_location = Location("Unkown beach", "beach", [], [], [location_1],
+                          "You wake up disoriented...\n" \
+                          "You don't recall how you got here, but you seem to be just at the beach,\n" \
+                          "just meters away from the ocean. The sun is blasting you from above.\n" \
+                          "You look around but see nothing else of note. You decide to get up and head for shelter\n" \
                           "in a nearby forest."
                           )
+
+
 
 class World:
     world_map = dict()
