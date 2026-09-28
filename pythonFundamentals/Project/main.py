@@ -1,5 +1,9 @@
 from util import clear_screen
 from world import World
+#import win32gui
+
+#current_window = win32gui.GetForegroundWindow()
+#win32gui.MoveWindow(current_window. 100, 100, 640, 480)
 
 class MenuItem:
     def __init__(self, name, id):
