@@ -31,6 +31,11 @@ def display(location):
     clear_screen()
     print(f"{bcolors.BLUE}{location.name}{bcolors.END}")
     print(location.description)
+    if len(location.items):
+        print(bcolors.GREEN)
+        for item in location.items:
+            print(item.name)
+        print(bcolors.END)
     exits = {}
     for num, exit in enumerate(location.exits, start = 1):
         print(f"{num}. {exit.name}")
@@ -57,7 +62,7 @@ def show_inventory():
     if len(items):
         print ("D - Drop item")
         print ("U - Use item")
-        print ("Any other key - Continue")
+        print ("Enter - Continue")
         i = input().lower()
         if i == 'd':
             try: 
@@ -66,7 +71,7 @@ def show_inventory():
                     World.player.drop_item(id - 1)
             except Exception as e:
                 pass
-        if i == 'u':
+        elif i == 'u':
             raise NotImplementedError
     else:
         print("Your inventory is empty.")

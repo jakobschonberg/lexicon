@@ -10,24 +10,29 @@ class Exit:
         self.target_location = target_location
 
 class Location:
-    def __init__(self, name, type, features, items, exits, description):
+    def __init__(self, name, type, items, exits, description):
         self.name = name
         self.type = type
-        self.features = features
         self.items = items
         self.exits = exits
         self.description = description
-        
 
-location_2 = Location("Battlefield", "plains", ["corpses"], ["small backpack", "short sword", "dagger", "goblin armor"], [],
+small_backpack = Item("Small backpack", "bag", 0)
+short_sword = Item("Short sword", "weapon", 2)
+dagger = Item("Dagger", "weapon", 1)
+goblin_armor = Item("Goblin armor", "misc", 0)
+
+location_2 = Location("Battlefield", "plains", [small_backpack, short_sword, dagger, goblin_armor], [],
                       "As you exit the forest into a large open field, something smells really bad.\n" \
                       "Looking further ahead you notice signs of recent battle. Goblin corpses lie mixed\n" \
                       "with halfling corpses. Besides some vulture birds, nobody seems to be around.\n" \
                       "You can loot the corpses if you wish."
                       )
 exit_1_to_2 = Exit("East", location_2)
+berries = Item("Red berrries", "food", 0)
+mushrooms = Item("Mushrooms", "food", 0)
 
-location_1 = Location("Forest", "forest", ["red berries", "mushrooms"], [], [exit_1_to_2],
+location_1 = Location("Forest", "forest", [berries, mushrooms], [exit_1_to_2],
                       "You manage to make your way into the forest, the tall trees provide a welcome shade from the sun,\n" \
                       "but you realize you are very hungry.\n" \
                       "You see some red berries as well as some suspisious looking mushrooms. You don't have any bag or\n" \
@@ -36,7 +41,7 @@ location_1 = Location("Forest", "forest", ["red berries", "mushrooms"], [], [exi
 
 exit_start_to_1 = Exit("Forest", location_1)
 
-start_location = Location("Unkown beach", "beach", [], [], [exit_start_to_1],
+start_location = Location("Unkown beach", "beach", [], [exit_start_to_1],
                           "You wake up disoriented...\n" \
                           "You don't recall how you got here, but you seem to be just at the beach,\n" \
                           "just meters away from the ocean. The sun is blasting you from above.\n" \
