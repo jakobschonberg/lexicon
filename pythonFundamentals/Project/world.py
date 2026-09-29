@@ -19,7 +19,7 @@ class Location:
         self.description = description
         
 
-location_2 = Location("Battlefield", "plains", ["corpses"], ["small backpack", "short sword", "dagger", "goblin armor"],
+location_2 = Location("Battlefield", "plains", ["corpses"], ["small backpack", "short sword", "dagger", "goblin armor"], [],
                       "As you exit the forest into a large open field, something smells really bad.\n" \
                       "Looking further ahead you notice signs of recent battle. Goblin corpses lie mixed\n" \
                       "with halfling corpses. Besides some vulture birds, nobody seems to be around.\n" \

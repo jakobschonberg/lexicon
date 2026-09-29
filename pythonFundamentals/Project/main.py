@@ -1,5 +1,8 @@
 from util import clear_screen
+from util import wait
 from world import World
+from world import Location
+from item import Item
 #import win32gui
 
 #current_window = win32gui.GetForegroundWindow()
@@ -34,6 +37,8 @@ def display(location):
     while True:
         try:
             i = input()
+            if (i.lower() == 'i'):
+                return "inventory"
             i = int(i)
             if i in exits.keys():
                 return exits[i].target_location
@@ -41,12 +46,41 @@ def display(location):
             if e is EOFError:
                 break
 
-
+def show_inventory():
+    clear_screen()
+    items = {}
+    for num, item in enumerate(World.player.items, start = 1):
+        print(num, item.name)
+        items[num] = item
+    if len(items):
+        print ("D - Drop item")
+        print ("U - Use item")
+        print ("Any other key - Continue")
+        i = input().lower()
+        if i == 'd':
+            try: 
+                id = int(input("Drop which item?"))
+                if id in items.keys():
+                    World.player_location.items.append(items[id])
+                    del World.player.items[num - 1]
+            except Exception as e:
+                pass
+        if i == 'u':
+            raise NotImplementedError
+    else:
+        print("Your inventory is empty.")
+        print("-continue-")
+        wait()
 
 def new_game():
     location = World.player_location
     while location:
-        location = display(location)
+        result = display(location)
+        if isinstance(result, str) and result == "inventory":
+            show_inventory()
+        elif isinstance(result, Location):
+            location = result
+            World.player_location = location
 
     
     

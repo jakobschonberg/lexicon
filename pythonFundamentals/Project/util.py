@@ -1,5 +1,6 @@
 import platform
 import subprocess
+import msvcrt
 
 def clear_screen():
     if platform.system()=="Windows":
@@ -10,3 +11,7 @@ def clear_screen():
             subprocess.run(["cls"])
     else: #Linux and Mac
         print("\033c", end="")
+
+
+def wait():
+    msvcrt.getch()
