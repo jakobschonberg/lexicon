@@ -3,6 +3,7 @@ from util import wait
 from world import World
 from world import Location
 from item import Item
+from bcolors import bcolors
 #import win32gui
 
 #current_window = win32gui.GetForegroundWindow()
@@ -28,6 +29,7 @@ class MainMenu:
 
 def display(location):
     clear_screen()
+    print(f"{bcolors.BLUE}{location.name}{bcolors.ENDC}")
     print(location.description)
     exits = {}
     for num, exit in enumerate(location.exits, start = 1):
