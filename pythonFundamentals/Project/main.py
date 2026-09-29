@@ -2,7 +2,7 @@ from util import clear_screen
 from util import wait
 from world import World
 from world import Location
-from item import Item
+#from item import Item
 from bcolors import bcolors
 #import win32gui
 
@@ -29,7 +29,7 @@ class MainMenu:
 
 def display(location):
     clear_screen()
-    print(f"{bcolors.BLUE}{location.name}{bcolors.ENDC}")
+    print(f"{bcolors.BLUE}{location.name}{bcolors.END}")
     print(location.description)
     exits = {}
     for num, exit in enumerate(location.exits, start = 1):
@@ -63,8 +63,7 @@ def show_inventory():
             try: 
                 id = int(input("Drop which item?"))
                 if id in items.keys():
-                    World.player_location.items.append(items[id])
-                    del World.player.items[num - 1]
+                    World.player.drop_item(id - 1)
             except Exception as e:
                 pass
         if i == 'u':
@@ -75,14 +74,14 @@ def show_inventory():
         wait()
 
 def new_game():
-    location = World.player_location
+    location = World.player.location
     while location:
         result = display(location)
         if isinstance(result, str) and result == "inventory":
             show_inventory()
         elif isinstance(result, Location):
             location = result
-            World.player_location = location
+            World.player.location = location
 
     
     

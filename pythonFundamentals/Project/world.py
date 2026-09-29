@@ -48,9 +48,8 @@ start_location = Location("Unkown beach", "beach", [], [], [exit_start_to_1],
 
 class World:
     world_map = dict()
-    player_location = start_location
     rags = Item("Rags", Item_Type.armor, 0, True)
-    player = Character(10, 20, "Player", [rags])
+    player = Character(10, 20, "Player", start_location, [rags])
 
     # def tick():
     #     px, py = World.player_location
