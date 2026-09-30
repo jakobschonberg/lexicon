@@ -36,16 +36,20 @@ def display(location):
         for item in location.items:
             print(item.name)
         print(bcolors.END)
+        print(f"{bcolors.ORANGE}P{bcolors.END} - pick up item") 
     exits = {}
     for num, exit in enumerate(location.exits, start = 1):
-        print(f"{num}. {exit.name}")
+        print(f"{bcolors.ORANGE}{num}{bcolors.END}. {exit.name}")
         exits[num] = exit
+    print(f"{bcolors.ORANGE}I{bcolors.END} - Inventory")
     i = None
     while True:
         try:
             i = input()
             if (i.lower() == 'i'):
                 return "inventory"
+            elif (i.lower() == 'p' and len(location.items)):
+                return "pickup"
             i = int(i)
             if i in exits.keys():
                 return exits[i].target_location
@@ -55,19 +59,19 @@ def display(location):
 
 def show_inventory():
     clear_screen()
-    items = {}
+    player_items = {}
     for num, item in enumerate(World.player.items, start = 1):
-        print(num, item.name)
-        items[num] = item
-    if len(items):
-        print ("D - Drop item")
-        print ("U - Use item")
-        print ("Enter - Continue")
+        print(f"{bcolors.ORANGE}{num}{bcolors.END}", item.name)
+        player_items[num] = item
+    if len(player_items):
+        print (f"{bcolors.ORANGE}D{bcolors.END} - Drop item")
+        print (f"{bcolors.ORANGE}U{bcolors.END} - Use item")
+        print (f"{bcolors.ORANGE}Enter{bcolors.END} - Continue")
         i = input().lower()
         if i == 'd':
             try: 
                 id = int(input("Drop which item?"))
-                if id in items.keys():
+                if id in player_items.keys():
                     World.player.drop_item(id - 1)
             except Exception as e:
                 pass
@@ -78,12 +82,29 @@ def show_inventory():
         print("-continue-")
         wait()
 
+def pick_up_item():
+    clear_screen()
+    items = {}
+    for num, item in enumerate(World.player.location.items, start = 1):
+        print(f"{bcolors.ORANGE}{num}{bcolors.END}", item.name)
+        items[num] = item
+    i = input("Pick up which item?")
+    try:
+        id = int(i)
+        if id in items.keys():
+            World.player.pick_up_item(id - 1)
+    except Exception as e:
+        pass
+
 def new_game():
     location = World.player.location
     while location:
         result = display(location)
-        if isinstance(result, str) and result == "inventory":
-            show_inventory()
+        if isinstance(result, str):
+            if result == "inventory":
+                show_inventory()
+            elif result == "pickup":
+                pick_up_item()
         elif isinstance(result, Location):
             location = result
             World.player.location = location
@@ -104,7 +125,7 @@ choice = None
 while choice is None:
     clear_screen()
     for num, item in enumerate(menu.menu_items, start = 1):
-        print(f"{num}. {item.name}")
+        print(f"{bcolors.ORANGE}{num}{bcolors.END}. {item.name}")
 
     try:
         choice = int(input()) - 1

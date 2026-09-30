@@ -14,4 +14,9 @@ class Character:
         if i >= 0 and i < len(self.items):
             self.location.items.append(self.items[i])
             del self.items[i]
+
+    def pick_up_item(self, i):
+        if i >= 0 and i < len(self.location.items):
+            self.items.append(self.location.items[i])
+            del self.location.items[i]
         
