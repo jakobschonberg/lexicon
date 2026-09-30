@@ -60,12 +60,17 @@ def display(location):
 def show_inventory():
     clear_screen()
     player_items = {}
+    has_wieldable_items = False
     for num, item in enumerate(World.player.items, start = 1):
-        print(f"{bcolors.ORANGE}{num}{bcolors.END}", item.name)
+        print(f"{bcolors.ORANGE}{num}{bcolors.END}", item.display_name())
         player_items[num] = item
+        if item.is_wieldable():
+            has_wieldable_items = True
     if len(player_items):
         print (f"{bcolors.ORANGE}D{bcolors.END} - Drop item")
         print (f"{bcolors.ORANGE}U{bcolors.END} - Use item")
+        if has_wieldable_items:
+            print (f"{bcolors.ORANGE}E{bcolors.END} - Equip/Unequip item")
         print (f"{bcolors.ORANGE}Enter{bcolors.END} - Continue")
         i = input().lower()
         if i == 'd':
@@ -73,6 +78,13 @@ def show_inventory():
                 id = int(input("Drop which item?"))
                 if id in player_items.keys():
                     World.player.drop_item(id - 1)
+            except Exception as e:
+                pass
+        elif i == 'e':
+            try: 
+                id = int(input("Equip/unequip which item?"))
+                if id in player_items.keys():
+                    World.player.equip(id - 1)
             except Exception as e:
                 pass
         elif i == 'u':
