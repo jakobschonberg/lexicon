@@ -4,6 +4,7 @@ from world import World
 from world import Location
 #from item import Item
 from bcolors import bcolors
+from combat import do_combat
 #import win32gui
 
 #current_window = win32gui.GetForegroundWindow()
@@ -31,6 +32,8 @@ def display(location):
     clear_screen()
     print(f"{bcolors.BLUE}{location.name}{bcolors.END}")
     print(location.description)
+    if location.has_hostiles():
+        do_combat()
     if len(location.items):
         print(bcolors.GREEN)
         for item in location.items:
@@ -75,14 +78,14 @@ def show_inventory():
         i = input().lower()
         if i == 'd':
             try: 
-                id = int(input("Drop which item?"))
+                id = int(input("Drop which item? "))
                 if id in player_items.keys():
                     World.player.drop_item(id - 1)
             except Exception as e:
                 pass
         elif i == 'e':
             try: 
-                id = int(input("Equip/unequip which item?"))
+                id = int(input("Equip/unequip which item? "))
                 if id in player_items.keys():
                     World.player.equip(id - 1)
             except Exception as e:

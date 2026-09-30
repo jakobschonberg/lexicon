@@ -1,10 +1,18 @@
+from enum import Enum
+
+class Character_Type(Enum):
+    player = 1
+    npc = 2
+    enemy = 3
+
 class Character:
-    def __init__(self, base_combat_strength, max_health, name, location, items):
+    def __init__(self, base_combat_strength, max_health, character_type, name, items):
         self.base_combat_strength = base_combat_strength
         self.max_health = max_health
+        self.character_type = character_type
         self.health = max_health
         self.name = name
-        self.location = location
+        self.location = None #To avoid cycle dependancies Charcter Location is either set seperately or upon Location creation
         if items == None:
             self.items = []
         else:
@@ -28,4 +36,17 @@ class Character:
                 item.wielded = not item.wielded
             else:
                 print(f"{item.name} cannot be equipped")
-        
+
+    def combat_strength(self):
+        strength = self.base_combat_strength
+        for item in self.items:
+            if item.wielded:
+                strength += item.combat_score
+        return strength
+
+    def kill(self):
+        while len(self.items):
+            self.drop_item(0)
+        for index, character in enumerate(self.location.characters):
+            if character == self:
+                del self.location.characters[index]
