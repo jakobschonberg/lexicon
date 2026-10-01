@@ -3,7 +3,7 @@ from item import Item_Type
 from util import wait
 from time import sleep
 from bcolors import bcolors
-from sys import exit
+from os import _exit
 
 class Character_Type(Enum):
     player = 1
@@ -74,8 +74,8 @@ class Character:
         if self.character_type == Character_Type.player:
             sleep(1)
             print(f"Game over - {bcolors.DARKRED}You have died{bcolors.END}.")
-            sleep(2)
-            exit(0)
+            sleep(6)
+            _exit(0)            
         while len(self.items):
             self.drop_item(0)
         for index, character in enumerate(self.location.characters):
