@@ -31,37 +31,37 @@ def display(location):
     print(location.description)
     if location.has_hostiles():
         do_combat()
-    if len(location.items):
-        print(bcolors.GREEN)
-        for item in location.items:
-            print(item.name)
-        print(bcolors.END)
-        print(f"{bcolors.ORANGE}P{bcolors.END} - pick up item") 
-    exits = {}
-    for num, exit in enumerate(location.exits, start = 1):
-        print(f"{bcolors.ORANGE}{num}{bcolors.END} - {exit.name}")
-        exits[num] = exit
-    print(f"{bcolors.ORANGE}I{bcolors.END} - Inventory")
-    i = None
-    while True:
-        try:
-            i = input()
-            if (i.lower() == 'i'):
-                return "inventory"
-            elif (i.lower() == 'p' and len(location.items)):
-                return "pickup"
-            i = int(i)
-            if i in exits.keys():
-                return exits[i].target_location
-        except Exception as e:
-            if e is EOFError:
-                break
+    if World.player.health > 0:
+        if len(location.items):
+            print(bcolors.GREEN)
+            for item in location.items:
+                print(item.name)
+            print(bcolors.END)
+            print(f"{bcolors.ORANGE}P{bcolors.END} - pick up item") 
+        exits = {}
+        for num, exit in enumerate(location.exits, start = 1):
+            print(f"{bcolors.ORANGE}{num}{bcolors.END} - {exit.name}")
+            exits[num] = exit
+        print(f"{bcolors.ORANGE}I{bcolors.END} - Inventory")
+        i = None
+        while True:
+            try:
+                i = input()
+                if (i.lower() == 'i'):
+                    return "inventory"
+                elif (i.lower() == 'p' and len(location.items)):
+                    return "pickup"
+                i = int(i)
+                if i in exits.keys():
+                    return exits[i].target_location
+            except Exception as e:
+                if e is EOFError:
+                    break
 
 
 def new_game():
-    location = World.player.location
-    while location:
-        result = display(location)
+    while World.player.location:
+        result = display(World.player.location)
         if isinstance(result, str):
             if result == "inventory":
                 show_inventory()
@@ -72,8 +72,7 @@ def new_game():
                     print("No free inventory space")
                     wait()
         elif isinstance(result, Location):
-            location = result
-            World.player.location = location    
+            World.player.location = result
 
 menu = MainMenu([
     MenuItem("Start New Game", "new"),

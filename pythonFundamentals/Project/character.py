@@ -3,7 +3,6 @@ from item import Item_Type
 from util import wait
 from time import sleep
 from bcolors import bcolors
-from os import _exit
 
 class Character_Type(Enum):
     player = 1
@@ -74,13 +73,14 @@ class Character:
         if self.character_type == Character_Type.player:
             sleep(1)
             print(f"Game over - {bcolors.DARKRED}You have died{bcolors.END}.")
-            sleep(6)
-            _exit(0)            
-        while len(self.items):
-            self.drop_item(0)
-        for index, character in enumerate(self.location.characters):
-            if character == self:
-                del self.location.characters[index]
+            sleep(2)
+            self.location = None
+        else:
+            while len(self.items):
+                self.drop_item(0)
+            for index, character in enumerate(self.location.characters):
+                if character == self:
+                    del self.location.characters[index]
 
     def inventory_space(self):
         space = 2
