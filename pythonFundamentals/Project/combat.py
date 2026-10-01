@@ -1,6 +1,5 @@
 from random import randint
 from time import sleep
-from sys import exit
 from world import World
 from character import Character_Type
 from bcolors import bcolors
@@ -45,9 +44,7 @@ def do_combat() :
         for enemy in enemies:
             attack(enemy.combat_strength() - player_strength, enemy.name, player)
     if player.health <= 0:
-        sleep(1)
-        print(f"Game over - {bcolors.DARKRED}You have died{bcolors.END}.")
-        sleep(2)
-        exit(0)
+        player.kill()
+
 
 

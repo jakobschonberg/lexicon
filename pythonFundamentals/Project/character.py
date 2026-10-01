@@ -1,6 +1,9 @@
 from enum import Enum
 from item import Item_Type
 from util import wait
+from time import sleep
+from bcolors import bcolors
+from sys import exit
 
 class Character_Type(Enum):
     player = 1
@@ -25,6 +28,21 @@ class Character:
             self.items[i].wielded = False
             self.location.items.append(self.items[i])
             del self.items[i]
+
+    def use_item(self, i):
+        if i >= 0 and i < len(self.items):
+            if self.items[i].item_type == Item_Type.food:
+                self.health = min(self.max_health, self.health + self.items[i].score)
+                if self.character_type == Character_Type.player:
+                    print(f"You eat {self.items[i].name}")
+                    sleep(2)
+                    if self.items[i].score < 0:
+                        print(f"{bcolors.RED}You don't feel so good{bcolors.END}")
+                    elif self.items[i].score > 0:
+                        print(f"{bcolors.GREEN}You feel refreshed{bcolors.END}")
+                if self.health <= 0:
+                    self.kill()
+                
 
     def pick_up_item(self, i):
         if i >= 0 and i < len(self.location.items):
@@ -53,6 +71,11 @@ class Character:
         return strength
 
     def kill(self):
+        if self.character_type == Character_Type.player:
+            sleep(1)
+            print(f"Game over - {bcolors.DARKRED}You have died{bcolors.END}.")
+            sleep(2)
+            exit(0)
         while len(self.items):
             self.drop_item(0)
         for index, character in enumerate(self.location.characters):
