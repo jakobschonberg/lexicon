@@ -8,13 +8,14 @@ class Exit:
         self.target_location = target_location
 
 class Location:
-    def __init__(self, name, type, characters, items, description):
+    def __init__(self, name, type, characters, items, description, revisit_description = ""):
         self.name = name
         self.type = type
         self.characters = characters
         self.items = items
         self.exits = []
         self.description = description
+        self.revisit_description = revisit_description
         for character in self.characters:
             character.location = self
 
@@ -24,27 +25,16 @@ class Location:
                 return True
         return False
 
-short_bow = Item("Short bow", Item_Type.weapon, 2, True)
-goblin_archer = Character(7, 14, Character_Type.enemy, "Goblin archer", [short_bow])
 
-location_3 = Location("Ruin", "plains", [goblin_archer], [],
-                      "You come upon a ruined building. You go closer to investigate when suddenly an arrow flies by your ear." \
-                      "You turn your head and see a goblin reaching for another arrow. You have no choice but to engage in the fight."
-                      )
+start_location = Location("Unkown beach", "beach", [], [],
+                          "You wake up disoriented...\n" \
+                          "You don't recall how you got here, but you seem to be just at the beach,\n" \
+                          "just meters away from the ocean. The sun is blasting you from above.\n" \
+                          "You look around but see nothing else of note. You decide to get up and head for shelter\n" \
+                          "in a nearby forest. Judging by the the sun's position you estimate the forest is to the south.",
+                          "You are back at the beach where you woke up."
+                          )
 
-
-
-small_backpack = Item("Small backpack", Item_Type.bag, 0)
-short_sword = Item("Short sword", Item_Type.weapon, 2)
-dagger = Item("Dagger", Item_Type.weapon, 1)
-goblin_armor = Item("Goblin armor", Item_Type.misc, 0) #Misc instead of armor since armor is too small for player to wear
-
-location_2 = Location("Battlefield", "plains", [], [small_backpack, short_sword, dagger, goblin_armor],
-                      "As you exit the forest into a large open field, something smells really bad.\n" \
-                      "Looking further ahead you notice signs of recent battle. Goblin corpses lie mixed\n" \
-                      "with halfling corpses. Besides some vulture birds, nobody seems to be around.\n" \
-                      "You can loot the corpses if you wish."
-                      )
 
 berries = Item("Red berrries", Item_Type.food, 3)
 mushrooms = Item("Mushrooms", Item_Type.food, -50)
@@ -53,18 +43,34 @@ location_1 = Location("Forest", "forest", [], [berries, mushrooms],
                       "You manage to make your way into the forest, the tall trees provide a welcome shade from the sun,\n" \
                       "but you realize you are very hungry.\n" \
                       "You see some red berries as well as some suspisious looking mushrooms. You don't have any bag or\n" \
-                      "backpack to collect food, but you could try and eat some."                      
+                      "backpack to collect food, but you could try and eat some.",
+                      "This forest seems very familiar. You are certain you have been here before."
                       )
 
 
+small_backpack = Item("Small backpack", Item_Type.bag, 0)
+short_sword = Item("Short sword", Item_Type.weapon, 2)
+dagger = Item("Dagger", Item_Type.weapon, 1)
+goblin_armor = Item("Goblin armor", Item_Type.armor, 1)
 
-start_location = Location("Unkown beach", "beach", [], [],
-                          "You wake up disoriented...\n" \
-                          "You don't recall how you got here, but you seem to be just at the beach,\n" \
-                          "just meters away from the ocean. The sun is blasting you from above.\n" \
-                          "You look around but see nothing else of note. You decide to get up and head for shelter\n" \
-                          "in a nearby forest. Judging by the the sun's position you estimate the forest is to the south."
-                          )
+location_2 = Location("Battlefield", "plains", [], [small_backpack, short_sword, dagger, goblin_armor],
+                      "As you exit the forest into a large open field, something smells really bad.\n" \
+                      "Looking further ahead you notice signs of recent battle. Goblin corpses lie mixed\n" \
+                      "with halfling corpses. Besides some vulture birds, nobody seems to be around.\n" \
+                      "You can loot the corpses if you wish.",
+                      "You are back at the battlefield you saw before."
+                      )
+
+
+short_bow = Item("Short bow", Item_Type.weapon, 2, True)
+goblin_archer = Character(7, 14, Character_Type.enemy, "Goblin archer", [short_bow])
+
+location_3 = Location("Ruin", "plains", [goblin_archer], [],
+                      "You come upon a ruined building. You go closer to investigate when suddenly an arrow flies by your ear.\n" \
+                      "You turn your head and see a goblin reaching for another arrow. You have no choice but to engage in the fight.",
+                      "You once again visit the ruined building."
+                      )
+
 
 start_location.exits.append(Exit("Forest", location_1))
 location_1.exits.append(Exit("Beach", start_location))

@@ -62,17 +62,20 @@ def display(location):
 def new_game():
     while World.player.location:
         result = display(World.player.location)
-        if isinstance(result, str):
-            if result == "inventory":
-                show_inventory()
-            elif result == "pickup":
-                if World.player.inventory_space() > 0:
-                    pick_up_item()
-                else:
-                    print("No free inventory space")
-                    wait()
-        elif isinstance(result, Location):
-            World.player.location = result
+        if World.player.location: 
+            if World.player.location.revisit_description != "":
+                World.player.location.description = World.player.location.revisit_description
+            if isinstance(result, str):
+                if result == "inventory":
+                    show_inventory()
+                elif result == "pickup":
+                    if World.player.inventory_space() > 0:
+                        pick_up_item()
+                    else:
+                        print("No free inventory space")
+                        wait()
+            elif isinstance(result, Location):
+                World.player.location = result
 
 menu = MainMenu([
     MenuItem("Start New Game", "new"),

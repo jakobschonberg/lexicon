@@ -58,6 +58,11 @@ class Character:
                     self.drop_item(i)
                     print(f"Your invntory is full, so you dropped {item_name}")
                     wait()
+                if item.wielded: #Can only equip 1 armor and 1 weapon at a time
+                    if item.item_type == Item_Type.armor or item.item_type == Item_Type.weapon:
+                        for other_item in self.items:
+                            if other_item != item and other_item.item_type == item.item_type:
+                                other_item.wielded = False
             else:
                 print(f"{item.name} cannot be equipped")
                 wait()
@@ -76,6 +81,7 @@ class Character:
             sleep(2)
             self.location = None
         else:
+            print(f"{self.name} dies")
             while len(self.items):
                 self.drop_item(0)
             for index, character in enumerate(self.location.characters):
