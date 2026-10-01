@@ -39,6 +39,7 @@ class Character:
                         print(f"{bcolors.RED}You don't feel so good{bcolors.END}")
                     elif self.items[i].score > 0:
                         print(f"{bcolors.GREEN}You feel refreshed{bcolors.END}")
+                    sleep(2)
                 if self.health <= 0:
                     self.kill()
                 
