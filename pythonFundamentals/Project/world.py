@@ -1,9 +1,6 @@
-#import random
 from character import Character
 from character import Character_Type
 from item import Item, Item_Type
-
-#tile_types = ["forest", "plains", "hills", "ocean"]
 
 class Exit:
     def __init__(self, name, target_location):
@@ -38,10 +35,10 @@ location_3 = Location("Ruin", "plains", [goblin_archer], [], [],
 
 exit_2_to_3 = Exit("Ruin", location_3)
 
-small_backpack = Item("Small backpack", "bag", 0)
-short_sword = Item("Short sword", "weapon", 2)
-dagger = Item("Dagger", "weapon", 1)
-goblin_armor = Item("Goblin armor", "misc", 0)
+small_backpack = Item("Small backpack", Item_Type.bag, 0)
+short_sword = Item("Short sword", Item_Type.weapon, 2)
+dagger = Item("Dagger", Item_Type.weapon, 1)
+goblin_armor = Item("Goblin armor", Item_Type.misc, 0) #Misc instead of armor since armor is too small for player to wear
 
 location_2 = Location("Battlefield", "plains", [], [small_backpack, short_sword, dagger, goblin_armor], [exit_2_to_3],
                       "As you exit the forest into a large open field, something smells really bad.\n" \
@@ -50,8 +47,8 @@ location_2 = Location("Battlefield", "plains", [], [small_backpack, short_sword,
                       "You can loot the corpses if you wish."
                       )
 exit_1_to_2 = Exit("East", location_2)
-berries = Item("Red berrries", "food", 0)
-mushrooms = Item("Mushrooms", "food", 0)
+berries = Item("Red berrries", Item_Type.food, 3)
+mushrooms = Item("Mushrooms", Item_Type.food, -3)
 
 location_1 = Location("Forest", "forest", [], [berries, mushrooms], [exit_1_to_2],
                       "You manage to make your way into the forest, the tall trees provide a welcome shade from the sun,\n" \
@@ -77,18 +74,6 @@ class World:
     rags = Item("Rags", Item_Type.armor, 0, True)
     player = Character(10, 20, Character_Type.player, "Player", [rags])
     player.location = start_location
-
-    # def tick():
-    #     px, py = World.player_location
-    #     for x in range(px - 5, px + 6):
-    #         for y in range(py -5, py + 6):
-    #             if (x, y) not in World.world_map.keys:
-    #                 World.generate_tile(x, y)
-
-    # def generate_tile(x, y):
-    #     r = random.randint(0, 3)
-    #     tile = Tile(tile_types[r], "", "")
-    #     #Todo add feature generation such as river or town or cave
 
 
 

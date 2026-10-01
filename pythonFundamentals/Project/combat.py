@@ -27,7 +27,7 @@ def attack(relative_score, attacker_name, defender):
 
 
 def do_combat() :
-    print("combat starts")
+    print("Combat begins:")
     location = World.player.location
     player = World.player
     player_strength = player.combat_strength()

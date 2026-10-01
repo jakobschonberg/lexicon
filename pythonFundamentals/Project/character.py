@@ -1,4 +1,6 @@
 from enum import Enum
+from item import Item_Type
+from util import wait
 
 class Character_Type(Enum):
     player = 1
@@ -33,15 +35,21 @@ class Character:
         if i >= 0 and i < len(self.items):
             item = self.items[i]
             if item.is_wieldable():
+                item_name = item.name
                 item.wielded = not item.wielded
+                if not item.wielded and self.inventory_space() < 0:
+                    self.drop_item(i)
+                    print(f"Your invntory is full, so you dropped {item_name}")
+                    wait()
             else:
                 print(f"{item.name} cannot be equipped")
+                wait()
 
     def combat_strength(self):
         strength = self.base_combat_strength
         for item in self.items:
             if item.wielded:
-                strength += item.combat_score
+                strength += item.score
         return strength
 
     def kill(self):
@@ -50,3 +58,12 @@ class Character:
         for index, character in enumerate(self.location.characters):
             if character == self:
                 del self.location.characters[index]
+
+    def inventory_space(self):
+        space = 2
+        for item in self.items:
+            if item.item_type == Item_Type.bag:
+                space += 4
+            elif item.item_type != Item_Type.armor or not item.wielded:
+                space -= 1
+        return space

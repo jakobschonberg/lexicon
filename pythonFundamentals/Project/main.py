@@ -2,13 +2,8 @@ from util import clear_screen
 from util import wait
 from world import World
 from world import Location
-#from item import Item
 from bcolors import bcolors
 from combat import do_combat
-#import win32gui
-
-#current_window = win32gui.GetForegroundWindow()
-#win32gui.MoveWindow(current_window. 100, 100, 640, 480)
 
 class MenuItem:
     def __init__(self, name, id):
@@ -119,20 +114,17 @@ def new_game():
             if result == "inventory":
                 show_inventory()
             elif result == "pickup":
-                pick_up_item()
+                if World.player.inventory_space() > 0:
+                    pick_up_item()
+                else:
+                    print("No free inventory space")
+                    wait()
         elif isinstance(result, Location):
             location = result
-            World.player.location = location
-
-    
-    
-
-def load():
-    raise NotImplementedError()
+            World.player.location = location    
 
 menu = MainMenu([
     MenuItem("Start New Game", "new"),
-    MenuItem("Load Game", "load"),
     MenuItem("Quit Game", "quit")
 ])
 
@@ -153,8 +145,6 @@ while choice is None:
 chosen = menu.menu_items[choice].id
 if chosen == "new":
     new_game()
-elif chosen == "load":
-    load()
 elif chosen == "quit":
     print("Goodbye")
 
