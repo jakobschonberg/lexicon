@@ -5,7 +5,7 @@ from character import Character_Type
 from bcolors import bcolors
 
 
-def attack(relative_score, attacker_name, defender):
+def attack(relative_score, attacker_name, defender) -> None:
     sleep(2)
     roll = randint(1, 20) + relative_score
     damage = 0
@@ -25,7 +25,7 @@ def attack(relative_score, attacker_name, defender):
     defender.health -= damage
 
 
-def do_combat() :
+def do_combat() -> None:
     print("Combat begins:")
     location = World.player.location
     player = World.player

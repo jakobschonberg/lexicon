@@ -14,7 +14,7 @@ class Location:
         for character in self.characters:
             character.location = self
 
-    def has_hostiles(self):
+    def has_hostiles(self) -> bool:
         for character in self.characters:
             if character.character_type == Character_Type.enemy:
                 return True

@@ -3,7 +3,7 @@ from util import wait
 from bcolors import bcolors
 from world import World
 
-def show_inventory():
+def show_inventory() -> None:
     key_input = "inventory opened"
     while(key_input and World.player.health > 0):
         key_input = ""
@@ -51,7 +51,7 @@ def show_inventory():
             print("-continue-")
             wait()
 
-def pick_up_item():
+def pick_up_item() -> None:
     clear_screen()
     items = {}
     for num, item in enumerate(World.player.location.items, start = 1):

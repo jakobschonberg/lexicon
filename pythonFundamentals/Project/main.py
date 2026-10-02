@@ -25,7 +25,7 @@ class MainMenu:
     def remove_item(self, menu_item_id):
         del self.menu_items[menu_item_id]
 
-def display(location):
+def display(location) -> str:
     clear_screen()
     print(f"{bcolors.BLUE}{location.name}{bcolors.END}")
     print(location.description)
@@ -59,7 +59,7 @@ def display(location):
                     break
 
 
-def new_game():
+def new_game() -> None:
     while World.player.location:
         result = display(World.player.location)
         if World.player.location: 

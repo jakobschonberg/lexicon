@@ -24,7 +24,7 @@ class Character:
         else:
             self.items = items
 
-    def drop_item(self, i):
+    def drop_item(self, i) -> None:
         if i >= 0 and i < len(self.items):
             self.items[i].wielded = False
             self.location.items.append(self.items[i])
@@ -37,7 +37,7 @@ class Character:
             self.drop_item(index_to_be_dropped)
             
 
-    def use_item(self, i):
+    def use_item(self, i) -> None:
         if i >= 0 and i < len(self.items):
             if self.items[i].item_type == Item_Type.food:
                 self.health = min(self.max_health, self.health + self.items[i].score)
@@ -54,12 +54,12 @@ class Character:
                     self.kill(True)
                 
 
-    def pick_up_item(self, i):
+    def pick_up_item(self, i) -> None:
         if i >= 0 and i < len(self.location.items):
             self.items.append(self.location.items[i])
             del self.location.items[i]
 
-    def equip(self, i):
+    def equip(self, i) -> None:
         if i >= 0 and i < len(self.items):
             item = self.items[i]
             if item.is_wieldable():
@@ -78,14 +78,14 @@ class Character:
                 print(f"{item.name} cannot be equipped")
                 wait()
 
-    def combat_strength(self):
+    def combat_strength(self) -> int:
         strength = self.base_combat_strength
         for item in self.items:
             if item.wielded:
                 strength += item.score
         return strength
 
-    def kill(self, clear = False):
+    def kill(self, clear = False) -> None:
         if self.character_type == Character_Type.player:
             sleep(1)
             if clear:
@@ -101,7 +101,7 @@ class Character:
                 if character == self:
                     del self.location.characters[index]
 
-    def inventory_space(self):
+    def inventory_space(self) -> int:
         space = 2
         for item in self.items:
             if item.item_type == Item_Type.bag:
@@ -110,7 +110,7 @@ class Character:
                 space -= 1
         return space
 
-    def max_inventory_space(self):
+    def max_inventory_space(self) -> int:
         space = 2
         for item in self.items:
             if item.item_type == Item_Type.bag:
