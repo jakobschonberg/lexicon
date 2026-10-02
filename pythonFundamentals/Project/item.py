@@ -8,7 +8,7 @@ class Item_Type(Enum):
     misc = 5
 
 class Item:
-    def __init__(self, name, item_type, score, wielded = False):
+    def __init__(self, name: str, item_type: Item_Type, score: int, wielded: bool = False):
         self.name = name
         self.item_type = item_type
         self.score = score

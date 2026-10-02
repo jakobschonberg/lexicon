@@ -2,13 +2,8 @@ from character import Character
 from character import Character_Type
 from item import Item, Item_Type
 
-class Exit:
-    def __init__(self, name, target_location):
-        self.name = name
-        self.target_location = target_location
-
 class Location:
-    def __init__(self, name, type, characters, items, description, revisit_description = ""):
+    def __init__(self, name: str, type: Character_Type, characters: list[Character], items: list[Item], description: str, revisit_description : str = ""):
         self.name = name
         self.type = type
         self.characters = characters
@@ -24,6 +19,11 @@ class Location:
             if character.character_type == Character_Type.enemy:
                 return True
         return False
+
+class Exit:
+    def __init__(self, name: str, target_location: Location):
+        self.name = name
+        self.target_location = target_location
 
 
 start_location = Location("Unkown beach", "beach", [], [],
@@ -70,7 +70,7 @@ location_3 = Location("Ruin", "plains", [goblin_archer], [],
                       "You turn your head and see a goblin reaching for another arrow. You have no choice but to engage in the fight.",
                       "You are in the ruined building."
                       )
-bear = Character(20, 30, Character_Type.enemy, "Angered Bear", [])
+bear = Character(20, 30, Character_Type.enemy, "Angry Bear", [])
 
 location_4 = Location("Cave", "cave", [bear], [],
                       "You step inside the cave, but it's not empty. An angry bear attacks you. You must defend yourself.")

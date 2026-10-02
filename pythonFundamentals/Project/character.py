@@ -4,6 +4,7 @@ from util import wait
 from util import clear_screen
 from time import sleep
 from bcolors import bcolors
+from item import Item
 
 class Character_Type(Enum):
     player = 1
@@ -11,7 +12,7 @@ class Character_Type(Enum):
     enemy = 3
 
 class Character:
-    def __init__(self, base_combat_strength, max_health, character_type, name, items):
+    def __init__(self, base_combat_strength: int, max_health: int, character_type: Character_Type, name: str, items: list[Item]):
         self.base_combat_strength = base_combat_strength
         self.max_health = max_health
         self.character_type = character_type

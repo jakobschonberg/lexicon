@@ -8,12 +8,12 @@ from inventory import show_inventory
 from inventory import pick_up_item
 
 class MenuItem:
-    def __init__(self, name, id):
+    def __init__(self, name: str, id: str):
         self.name = name
         self.id = id
 
 class MainMenu:
-    def __init__(self, menu_items = None):
+    def __init__(self, menu_items: list[MenuItem] = None):
         if menu_items == None:
             self.menu_items = []
         else:
