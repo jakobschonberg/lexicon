@@ -1,6 +1,7 @@
 from enum import Enum
 from item import Item_Type
 from util import wait
+from util import clear_screen
 from time import sleep
 from bcolors import bcolors
 
@@ -27,6 +28,13 @@ class Character:
             self.items[i].wielded = False
             self.location.items.append(self.items[i])
             del self.items[i]
+        if self.inventory_space() < 0: #if we drop a bag, we might have negative free inventory space, so we might drop more items
+            index_to_be_dropped = 0
+            for index, item in enumerate(self.items):
+                if item.item_type != Item_Type.bag and (item.item_type != Item_Type.armor or not item.wielded):
+                    index_to_be_dropped = index
+            self.drop_item(index_to_be_dropped)
+            
 
     def use_item(self, i):
         if i >= 0 and i < len(self.items):
@@ -40,8 +48,9 @@ class Character:
                     elif self.items[i].score > 0:
                         print(f"{bcolors.GREEN}You feel refreshed{bcolors.END}")
                     sleep(2)
+                del self.items[i]
                 if self.health <= 0:
-                    self.kill()
+                    self.kill(True)
                 
 
     def pick_up_item(self, i):
@@ -75,11 +84,13 @@ class Character:
                 strength += item.score
         return strength
 
-    def kill(self):
+    def kill(self, clear = False):
         if self.character_type == Character_Type.player:
             sleep(1)
+            if clear:
+                clear_screen()
+            print(f"Health: {self.health} / {self.max_health}")
             print(f"Game over - {bcolors.DARKRED}You have died{bcolors.END}.")
-            sleep(2)
             self.location = None
         else:
             print(f"{self.name} dies")
@@ -96,4 +107,11 @@ class Character:
                 space += 4
             elif item.item_type != Item_Type.armor or not item.wielded:
                 space -= 1
+        return space
+
+    def max_inventory_space(self):
+        space = 2
+        for item in self.items:
+            if item.item_type == Item_Type.bag:
+                space += 5
         return space
