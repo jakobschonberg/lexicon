@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/stoop/Downloads/webshop.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1059"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="customers" custom_title="0" dock_id="1" table="4,9:maincustomers"/><dock_state state="000000ff00000000fd00000001000000020000000000000000fc0100000001fb000000160064006f0063006b00420072006f00770073006500310100000000ffffffff0000011e00ffffff000000000000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1">--Lab 1.1
+SELECT first_name, email FROM customers;
+--Lab 1.2
+SELECT * FROM products WHERE category = 'Shoes';
+--Lab 1.3
+SELECT * FROM customers WHERE city = 'Uppsala';
+--Lab 1.4
+SELECT * FROM products WHERE price = 199;
+--Lab 1.5
+SELECT * FROM products ORDER BY name;
+--Lab 1.6
+SELECT * FROM customers ORDER BY joined_date;
+--Lab 1.7
+SELECT * FROM products WHERE STOCK = 0;
+--Lab 1.8
+SELECT * FROM customers ORDER BY joined_date DESC LIMIT 3;
+--Lab 1.9
+SELECT * FROM customers WHERE city IN ('Stockholm','Göteborg');
+--Lab 1.10
+SELECT name AS product, price AS price_sek FROM products;
+--Lab1 Bonus 1
+SELECT * FROM products WHERE category IN ('Shoes','Clothing') AND price &gt; 1000;
+--Lab1 Bonus 2
+SELECT name, price, stock, price * stock as stock_value FROM products WHERE stock &gt; 0 ORDER BY stock_value DESC;
+--Lab1 Bonus 3
+SELECT first_name FROM customers WHERE first_name LIKE '____';
+--Lab1 Bonus 4
+SELECT * FROM products ORDER BY price LIMIT 5 OFFSET 5;
+--Lab1 Bonus 5
+SELECT * FROM customers WHERE joined_date &lt; '2025' AND NOT city = 'Uppsala' ORDER BY city, last_name;
+--Extra challenges: SELECT
+--level 1.1
+SELECT * FROM products WHERE NOT category = 'Accessories' AND stock &gt; 0 AND name LIKE '% %';
+--level 1.2
+SELECT * FROM customers WHERE city LIKE 'S%' OR city LIKE 'M%' OR city IS NULL;
+--level 1.3
+SELECT * FROM products WHERE category = 'Shoes' ORDER BY price DESC LIMIT 1 OFFSET 1;
+--level 1.4
+SELECT * FROM customers WHERE joined_date LIKE '2024%' OR joined_date LIKE '2025%' ORDER BY joined_date DESC LIMIT 3;
+--level 2.5
+SELECT first_name || ' ' || last_name AS full_name FROM customers ORDER BY last_name;
+--level 2.6
+SELECT CASE WHEN price &lt; 200 THEN 'budget' WHEN price &gt; 799 THEN 'premium' ELSE 'mid' END as 'price level', * FROM products;
+--level 2.7
+SELECT first_name, COALESCE(city, 'Unknown') AS city FROM customers;
+--level 2.8
+SELECT * FROM customers WHERE CAST(strftime('%m', joined_date) AS integer) &lt;= 6;
+--level 2.9
+SELECT * FROM products ORDER BY LENGTH(name) DESC LIMIT 1;
+--level 2.10
+SELECT substr(email, 0, instr(email, '@')) as username FROM customers;
+--level 3.11
+SELECT * FROM products WHERE price &gt; (SELECT AVG(price) FROM products);
+--level 3.12
+SELECT (name || ' costs ' || CAST(price AS INTEGER) || ' kr') AS name_and_price FROM products WHERE stock &gt; 0 ORDER BY price;
+--level 3.13
+SELECT city, COUNT() FROM customers GROUP BY city ORDER BY COUNT() DESC;
+</sql><current_tab id="0"/></tab_sql></sqlb_project>
