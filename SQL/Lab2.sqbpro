@@ -1,38 +1,238 @@
-<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/stoop/Downloads/webshop.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1879"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="orders" custom_title="0" dock_id="1" table="4,6:mainorders"/><dock_state state="000000ff00000000fd00000001000000020000037e000003b7fc0100000001fb000000160064006f0063006b00420072006f007700730065003101000000000000037e0000011e00ffffff000002690000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="customers" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="79"/><column index="2" value="70"/><column index="3" value="79"/><column index="4" value="215"/><column index="5" value="79"/><column index="6" value="87"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="orders" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="56"/><column index="2" value="81"/><column index="3" value="72"/><column index="4" value="44"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1*">--CREATE TABLE orders(
-	order_id INTEGER PRIMARY KEY,
-	customer_id INTEGER NOT NULL,
-	order_date TEXT NOT NULL,
-	status TEXT NOT NULL DEFAULT 'new'
-		CHECK (status IN ('new', 'shipped', 'delivered', 'cancelled')),
-	FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
-);
---CREATE TABLE order_items(
-	order_id INTEGER NOT NULL,
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/stoop/Downloads/webshop.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="2117"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="campaigns" custom_title="0" dock_id="1" table="4,9:maincampaigns"/><dock_state state="000000ff00000000fd00000001000000020000037e000003b7fc0100000001fb000000160064006f0063006b00420072006f007700730065003101000000000000037e0000011e00ffffff0000037e0000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="coupons" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="35"/><column index="2" value="107"/><column index="3" value="67"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="customers" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="79"/><column index="2" value="70"/><column index="3" value="79"/><column index="4" value="215"/><column index="5" value="79"/><column index="6" value="87"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="orders" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="56"/><column index="2" value="81"/><column index="3" value="87"/><column index="4" value="44"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="product_suppliers" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="69"/><column index="2" value="70"/><column index="3" value="95"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="products" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="69"/><column index="2" value="135"/><column index="3" value="95"/><column index="4" value="55"/><column index="5" value="39"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="suppliers" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="70"/><column index="2" value="151"/><column index="3" value="55"/><column index="4" value="89"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="teams" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="55"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1*">--CREATE TABLE orders(
+	order_id INTEGER PRIMARY KEY,
+	customer_id INTEGER NOT NULL,
+	order_date TEXT NOT NULL,
+	status TEXT NOT NULL DEFAULT 'new'
+		CHECK (status IN ('new', 'shipped', 'delivered', 'cancelled')),
+	FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+--CREATE TABLE order_items(
+	order_id INTEGER NOT NULL,
+	product_id INTEGER NOT NULL,
+	quantity INTEGER NOT NULL CHECK (quantity &gt; 0),
+	unit_price REAL NOT NULL,
+	PRIMARY KEY (order_id, product_id),
+	FOREIGN KEY (order_id) REFERENCES orders(order_id),
+	FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+--INSERT
+	INTO orders(order_id, customer_id, order_date)
+	VALUES(100, 1, '2026-10-01');
+------------------
+--2.1
+--CREATE TABLE books(
+	book_id INTEGER PRIMARY KEY,
+	title TEXT NOT NULL,
+	author TEXT,
+	year INTEGER
+);
+--2.2
+--DROP TABLE books;
+--CREATE TABLE books(
+	book_id INTEGER PRIMARY KEY,
+	title TEXT NOT NULL,
+	author TEXT,
+	year INTEGER CHECK (year &gt; 1400)
+);
+--2.3
+--ALTER TABLE books
+	ADD COLUMN isbn TEXT;
+--2.4
+--DROP TABLE books
+--2.5
+--CREATE TABLE reviews(
+	review_id INTEGER PRIMARY KEY,
 	product_id INTEGER NOT NULL,
-	quantity INTEGER NOT NULL CHECK (quantity &gt; 0),
-	unit_price REAL NOT NULL,
-	PRIMARY KEY (order_id, product_id),
-	FOREIGN KEY (order_id) REFERENCES orders(order_id),
-	FOREIGN KEY (product_id) REFERENCES products(product_id)
+	rating INTEGER CHECK (rating &gt;= 1 AND rating &lt;= 5),
+	comment TEXT,
+	CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
-
---INSERT INTO orders(order_id, customer_id, order_date)
-VALUES(100, 1, '2026-10-01');
-------------------
---2.1
---CREATE TABLE books(
-	book_id INTEGER PRIMARY KEY,
-	title TEXT NOT NULL,
-	author TEXT,
-	year INTEGER
+--2.6
+--INSERT
+INTO reviews(review_id, product_id, rating)
+VALUES(1,2,6);
+/*
+Execution finished with errors.
+Result: CHECK constraint failed: rating &gt;= 1 AND rating &lt;= 5
+At line 51:
+INSERT INTO reviews(review_id, product_id, rating)
+VALUES(1,2,6);
+*/
+--2.7
+--INSERT
+INTO reviews(review_id, product_id, rating)
+VALUES(1,2,5);
+/*
+Execution finished with errors.
+Result: FOREIGN KEY constraint failed
+At line 62:
+INSERT
+INTO reviews(review_id, product_id, rating)
+VALUES(1,50,5);
+*/
+--2.8
+-- I somehow doubt I'm supposed to upload a hand drawn image to github for this...
+--Extra challenges
+--E1
+--CREATE TABLE suppliers(
+	supplier_id INTEGER PRIMARY KEY,
+	name TEXT UNIQUE NOT NULL,
+	country TEXT DEFAULT 'Sweden',
+	email TEXT
 );
---2.2
---DROP TABLE books;
---CREATE TABLE books(
-	book_id INTEGER PRIMARY KEY,
-	title TEXT NOT NULL,
-	author TEXT,
-	year INTEGER CHECK (year &gt; 1400)
+--E2
+--INSERT
+	INTO suppliers(supplier_id, name, email)
+	VALUES(1, 'supplier_of_things', 'sot@me.com');
+SELECT * FROM suppliers; --Country says Sweden
+--E3
+--INSERT
+	INTO suppliers(supplier_id, name, email)
+	VALUES(2, 'supplier_of_things', 'sot2@me.com');
+/*
+Execution finished with errors.
+Result: UNIQUE constraint failed: suppliers.name
+At line 89:
+INSERT
+	INTO suppliers(supplier_id, name, email)
+	VALUES(2, 'supplier_of_things', 'sot2@me.com');
+*/
+--E4
+--CREATE TABLE coupons(
+	code TEXT PRIMARY KEY,
+	discount_percent REAL CHECK (discount_percent &gt;= 1 AND discount_percent &lt;= 90),
+	valid_until date NOT NULL
 );
---2.3
-</sql><current_tab id="0"/></tab_sql></sqlb_project>
+--INSERT
+	INTO coupons(code, discount_percent, valid_until)
+	VALUES('SUMMER20', 95, '2027-10-06');
+/*
+Execution finished with errors.
+Result: CHECK constraint failed: discount_percent &gt;= 1 AND discount_percent &lt;= 90
+At line 106:
+INSERT
+	INTO coupons(code, discount_percent, valid_until)
+	VALUES('SUMMER20', 95, '2027-10-06');
+*/
+--E5
+--INSERT
+	INTO suppliers(name, email)
+	VALUES('my_supplier', 'ms@me.com');
+SELECT * FROM suppliers; --my_supplier has supplier_id 2 (next free id?)
+--E6
+--ALTER
+	TABLE suppliers RENAME COLUMN email to contact_email;
+--E7
+PRAGMA table_info(products);
+--E8
+--CREATE
+	TABLE product_suppliers(
+		product_id INTEGER NOT NULL,
+		supplier_id INTEGER NOT NULL,
+		purchase_price REAL CHECK (purchase_price &gt; 0),
+		PRIMARY KEY (product_id, supplier_id),
+		CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES products(product_id),
+		CONSTRAINT fk_supplier FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id)
+	);
+--INSERT
+	INTO product_suppliers(product_id, supplier_id, purchase_price)
+	VALUES(1, 99, 999);
+/*
+Execution finished with errors.
+Result: FOREIGN KEY constraint failed
+At line 138:
+INSERT
+	INTO product_suppliers(product_id, supplier_id, purchase_price)
+	VALUES(1, 99, 999);
+*/
+--E9
+--CREATE
+	TABLE campaigns(
+		campaign_id INTEGER PRIMARY KEY,
+		name TEXT UNIQUE,
+		start_date date,
+		end_date date CHECK (start_date &lt; end_date)		
+	);
+--INSERT
+	INTO campaigns(name, start_date, end_date)
+	VALUES('test campaign', '2026-10-10', '2026-10-06');
+/*
+Execution finished with errors.
+Result: CHECK constraint failed: start_date &lt; end_date
+At line 157:
+INSERT
+	INTO campaigns(name, start_date, end_date)
+	VALUES('test campaign', '2026-10-10', '2026-10-06');
+*/
+--E10
+--CREATE
+	TABLE product_sizes(
+		product_sizes_id INTEGER PRIMARY KEY,
+		product_id INTEGER NOT NULL,
+		size TEXT CHECK (size IN ('S', 'M', 'L', 'XL')),
+		stock INTEGER DEFAULT 0,
+		CONSTRAINT uq_product_sizes UNIQUE(product_id, size),
+		CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES products(product_id)
+	);
+--INSERT
+	INTO product_sizes(product_id, size)
+	VALUES(1, 'M');
+/*
+Execution finished without errors.
+*/
+--INSERT
+	INTO product_sizes(product_id, size)
+	VALUES(1, 'M');
+/*
+Execution finished with errors.
+Result: UNIQUE constraint failed: product_sizes.product_id, product_sizes.size
+At line 184:
+INSERT
+	INTO product_sizes(product_id, size)
+	VALUES(1, 'M');
+*/
+--E11
+--CREATE
+	TABLE employees(
+		employee_id INTEGER PRIMARY KEY,
+		manager_id INTEGER,
+		name TEXT,
+		FOREIGN KEY (manager_id) REFERENCES employees(employee_id)
+	);
+--INSERT
+	INTO employees(employee_id, manager_id, name)
+	VALUES(1, NULL, 'Ada'),(2, 1, 'Bob'),(3, 1, 'Cecil');
+SELECT * FROM employees;
+--E12
+--CREATE
+	TABLE teams(
+		team_id INTEGER PRIMARY KEY,
+		team_name TEXT
+	);
+--CREATE
+	TABLE players(
+		player_id INTEGER PRIMARY KEY,
+		team_id INTEGER NOT NULL,
+		player_name TEXT,
+		FOREIGN KEY (team_id) REFERENCES teams(team_id) ON DELETE CASCADE
+	);
+--DROP TABLE teams;
+--DROP TABLE players;
+--INSERT
+	INTO teams(team_id, team_name)
+	VALUES(1, 'my_team');
+--INSERT
+	INTO players(team_id, player_name)
+	VALUES(1, 'Ada'),(1, 'Bob');
+SELECT * FROM players;
+--DELETE
+	FROM teams WHERE team_id = 1;
+SELECT * FROM players;
+/*
+Execution finished without errors.
+Result: 0 rows returned in 4ms
+At line 231:
+SELECT * FROM players;
+*/
+	</sql><current_tab id="0"/></tab_sql></sqlb_project>
