@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="webshop.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="167"/><column_width id="1" width="0"/><column_width id="2" width="61"/><column_width id="3" width="2117"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="orders" custom_title="0" dock_id="2" table="4,6:mainorders"/><dock_state state="000000ff00000000fd00000001000000020000039a000003b7fc0100000002fb000000160064006f0063006b00420072006f007700730065003101000000000000039a0000000000000000fb000000160064006f0063006b00420072006f007700730065003201000000000000039a0000012300ffffff000002690000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="campaigns" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="80"/><column index="2" value="40"/><column index="3" value="69"/><column index="4" value="62"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="orders" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="56"/><column index="2" value="81"/><column index="3" value="87"/><column index="4" value="79"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1*">--INSERT
+ INTO orders (order_id, customer_id, order_date, status) VALUES
+(2, 2, '2026-01-12', 'delivered'),
+(3, 1, '2026-01-20', 'delivered'),
+(4, 3, '2026-01-28', 'delivered'),
+(5, 4, '2026-02-03', 'delivered'),
+(6, 5, '2026-02-10', 'delivered'),
+(7, 6, '2026-02-14', 'cancelled'),
+(8, 2, '2026-02-21', 'delivered'),
+(9, 8, '2026-02-27', 'shipped'),
+(10, 9, '2026-03-04', 'shipped'),
+(11, 1, '2026-03-09', 'shipped'),
+(12, 3, '2026-03-15', 'new'),
+(13, 6, '2026-03-18', 'new'),
+(14, 4, '2026-03-22', 'new'),
+(15, 2, '2026-03-28', 'new');
+
+--INSERT
+ INTO order_items (order_id, product_id, quantity, unit_price) VALUES
+(2, 4, 1, 1199),
+(3, 9, 3, 129),
+(4, 2, 2, 249), (4, 6, 1, 499),
+(5, 8, 1, 1399),
+(6, 1, 1, 599), (6, 10, 1, 179),
+(7, 7, 1, 749),
+(8, 2, 1, 249), (8, 9, 2, 129),
+(9, 11, 1, 1299),
+(10, 3, 1, 199), (10, 2, 3, 249),
+(11, 6, 2, 499),
+(12, 4, 1, 1199), (12, 9, 1, 129),
+(13, 1, 2, 599),
+(14, 10, 2, 179), (14, 3, 1, 199),
+(15, 8, 1, 1399), (15, 2, 1, 249);
+
+--CREATE TABLE order_sheet (
+  order_no INTEGER,
+  customer TEXT,
+  email    TEXT,
+  city     TEXT,
+  products TEXT,
+  total    REAL
+);
+--INSERT INTO order_sheet VALUES
+(1, 'Anna Lindqvist', 'anna.lindqvist@example.com', 'Uppsala', 'Hoodie Black, Cap Logo x2', 997),
+(3, 'Anna Lindqvist', 'anna.lindqvist@example.com', 'Uppsala', 'Socks 3-pack x3', 387),
+(4, 'Sara Ahmed', 'sara.ahmed@example.com', 'Goteborg', 'T-shirt White x2, Joggers Grey', 997),
+(6, 'Maria Nilsson', 'maria.n@example.com', 'Malmö', 'Hoodie Black, Beanie', 778),
+(11, 'Anna Lindqvist', 'anna.l@example.com', 'Uppsala', 'Joggers Grey x2', 998);
+
+SELECT * FROM orders;
+--3.1
+--INSERT
+	INTO customers(first_name, last_name, email, city, joined_date)
+	VALUES('Jakob', 'Schönberg', 'spam@me.com', 'Täby', CURRENT_DATE);
+--3.2
+--INSERT
+	INTO products(name, category, price, stock)
+	VALUES('Scarf', 'Accessories', 229, 15), ('Gloves', 'Accessories', 199, 20);
+--3.3
+--INSERT
+	INTO orders(customer_id, order_date, status)
+	VALUES(7,CURRENT_DATE, 'new');
+--INSERT
+	INTO order_items(order_id, product_id, quantity, unit_price)
+	VALUES(16, 10, 2, 179);
+--3.4
+--INSERT
+	INTO order_items(order_id, product_id, quantity, unit_price)
+	VALUES(16, 8, 0, 99);
+-- fails since quantity has a check(quantity &gt; 0)
+/*
+Execution finished with errors.
+Result: CHECK constraint failed: quantity &gt; 0
+At line 52:
+INSERT
+	INTO order_items(order_id, product_id, quantity, unit_price)
+	VALUES(16, 8, 0, 99);
+*/
+--3.5
+--UPDATE
+	orders
+	SET status = 'shipped'
+	WHERE order_id = 12;
+--3.6
+--UPDATE
+	products
+	SET stock = 50
+	WHERE product_id = 5;
+--3.7
+--UPDATE
+	products
+	SET price = price * 1.1
+	WHERE category = 'Accessories';
+--3.8
+--DELETE
+ FROM orders WHERE status = 'cancelled';
+-- FOREIGN KEY constraint failed
+-- We can't delete the order since order_items has an item referencing the order
+-- and order_items does not have a 'ON DELETE CASCADE' on that foreign KEY
+SELECT * FROM orders WHERE status = 'cancelled';
+--DELETE
+	FROM order_items WHERE order_id = 7;
+--DELETE
+	FROM orders WHERE order_id = 7;
+-- Now it works, since we deleted the order_items first.
+--3.9
+SELECT COUNT(*) FROM orders; --15 orders
+--3.10
+/*
+Unclear what you are trying to accomplish.
+I'm assuming it's a table of students and each student can have multiple phone numbers and multiple courses
+Problems:
+1) Having multiple phone numbers in one column is a problem, better to have a seperate table for phone_numbers where each phone_number is linked to a student_id
+2) Having multiple columns for courses is a problem, better to have a seperate table for courses and then a middle table for linking student_id to course_id for each student taking a course
+*/
+--3.11
+/*
+There's multiple rows with the same customer name, customer email, customer city
+Also there are multiple products in the same product column which is a problem in itself as it is difficult to read data when it's formatted like that
+Further there's just a single total for all the items, meaning it's difficult to do a partial refund as we don't know how much was paid for each item
+To fix this we should:
+1) Make a seperate Table for customers (for things like customer name, emaii, city) and just have customerID in the order_sheet table
+2) have a seperate Table for products
+3) have a seperate table order_sheet_items where we have order_id and product_id and quantity and price
+*/
+--3.12
+--customer_email does not belong in the same table as orders, we would have one email for every order, it belongs in a customer TABLE
+--3.13
+--Again... I'm assuming you don't want me to send a hand drawn picture to GIT???
+--3.14
+/*
+By the description I'm assuming each lesson has exactly 1 student and exactly 1 teacher
+so...
+ student - lesson would be 1:N
+ teacher - lesson would be 1:N
+ student - teacher would be N:M (need middle table such as lesson)
+ teacher - instrument would be N:M (need middle table to track which teacher can teach which instrument
+ maybe we also have student - instrument N:M for which student is learning each instrument so middle table there too
+ lesson - room would be 1:N
+ date and time are just columns in lesson
+*/
+--3.15
+-- Hand drawn...
+--3.16
+--CREATE
+	TABLE students(
+		student_id INTEGER PRIMARY KEY,
+		name TEXT NOT NULL		
+	);
+--INSERT
+	INTO students(name)
+	VALUES('Ada'), ('Bob');	
+--CREATE
+	TABLE teachers(
+		teacher_id INTEGER PRIMARY KEY,
+		name TEXT NOT NULL
+	);
+--INSERT
+	INTO teachers(name)
+	VALUES('Cecil'), ('Dana');
+--CREATE
+	TABLE instruments(
+		instrument_id INTEGER PRIMARY KEY,
+		name TEXT NOT NULL
+	);
+--INSERT
+	INTO instruments(name)
+	VALUES('Guitar'), ('Drums');
+--CREATE
+	TABLE teacher_instruments(
+		teacher_instrument_id INTEGER PRIMARY KEY,
+		teacher_id INTEGER NOT NULL,
+		instrument_id INTEGER NOT NULL,
+		CONSTRAINT fk_teacher FOREIGN KEY (teacher_id) REFERENCES teachers(teacher_id) ON DELETE CASCADE
+	);
+--INSERT
+	INTO teacher_instruments(teacher_id, instrument_id)
+	VALUES(1, 1),(2, 2)
+--CREATE
+	TABLE student_instruments(
+		student_instrument_id INTEGER PRIMARY KEY,
+		student_id INTEGER NOT NULL,
+		instrument_id INTEGER NOT NULL,
+		CONSTRAINT fk_student FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
+	);
+--INSERT
+	INTO student_instruments(student_id, instrument_id)
+	VALUES(1, 2),(2, 1)
+--CREATE
+	TABLE lessons(
+		lesson_id INTEGER PRIMARY KEY,
+		room_id INTEGER NOT NULL, --If room needs more data to it a seperate table for room could be added with a foreign key referencing it
+		teacher_id INTEGER NOT NULL,
+		student_id INTEGER NOT NULL,
+		instrument_id INTEGER NOT NULL,
+		lesson_date date,
+		lesson_time time,
+		CONSTRAINT fk_student FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
+		CONSTRAINT fk_teacher FOREIGN KEY (teacher_id) REFERENCES teachers(teacher_id) ON DELETE CASCADE,
+		CONSTRAINT fk_instrument FOREIGN KEY (instrument_id) REFERENCES instruments(instrument_id) ON DELETE CASCADE
+	);
+--INSERT
+	INTO lessons(room_id, teacher_id, student_id, instrument_id, lesson_date, lesson_time)
+	VALUES(1, 1, 2, 1, '2026-10-08', '08:00:00'),
+		(3, 1, 2, 1, '2026-10-15', '08:00:00');
+
+
+
+</sql><current_tab id="0"/></tab_sql></sqlb_project>
