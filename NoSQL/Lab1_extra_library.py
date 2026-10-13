@@ -1,3 +1,4 @@
+from datetime import datetime
 from pymongo import MongoClient
 client = MongoClient("mongodb://localhost:27017/")
 db = client["library"]
@@ -14,7 +15,7 @@ books:       -- for each book title
     "copies",
     "reviews" (list member_id, rating and review_text)}
 physical_books:   --each book can have multiple copies that can be lent out/returned seperately
-    {"_id",      --unique id for different physical books of same title
+    {"_id",      --unique id for different physical books
     "book_id",   --referencing books
     "loan" (list containing member_id who lent it?, loaned date and returned date) -- in case a book is damamged it might be valuable to know not just who lent the book last
     }
@@ -52,64 +53,116 @@ def schema_validation():
         "validationLevel": "strict",
         "validationAction": "error"
     }
-    books_vexpr =  {"$jsonSchema":
-        {
-            "bsonType": "object",
-            "required": ["title", "author", "genre", "copies"],
+
+    books_vexpr = { "$jsonSchema": {
+            "bsonType": 'object',
+            "required": [
+            '_id',
+            'author',
+            'copies',
+            'genre',
+            'reviews',
+            'title'
+            ],
             "properties": {
-                "title": {
-                   "bsonType": "string",
-                   "description": "must be a string and is required"
+                "_id": {
+                    "bsonType": 'int'
                 },
                 "author": {
-                   "bsonType": "string",
-                   "description": "must be a string and is required"
-                },
-                "genre": {
-                   "enum": ["Science Fiction", "Fantasy", "Adventure", "Mystery", "Horror", "Thriller", "Romance", "Math", "Computer Science", "Physics", "History", "Other"],
-                   "description": "can only be one of the enum values and is required"
+                    "bsonType": 'string'
                 },
                 "copies": {
-                   "bsonType": "int",
-                   "minimum": 0,
-                   "description": "must be an int and is required"
+                    "bsonType": 'int'
+                },
+                "genre": {
+                    "bsonType": 'string'
                 },
                 "reviews": {
-                   "bsonType": "string",
-                   "description": "must be a list[dict{int: tuple(int, string)}] and is not required"
-                }                
-             }
-        },
-        "validationLevel": "strict",
-        "validationAction": "error"
-    }
-
-
-'''
-                "year": {
-                   "bsonType": "int",
-                   "minimum": 2017,
-                   "maximum": 3017,
-                   "exclusiveMaximum": False,
-                   "description": "must be an integer in [ 2017, 3017 ] and is required"
+                    "bsonType": 'array',
+                    "items": {
+                    "bsonType": 'object',
+                    "properties": {
+                        "member_id": {
+                        "bsonType": 'int'
+                        },
+                        "rating": {
+                        "bsonType": 'int'
+                        },
+                        "review_text": {
+                        "bsonType": 'string'
+                        }
+                    },
+                    "required": [
+                        'member_id',
+                        'rating',
+                        'review_text'
+                    ]
+                    }
                 },
-                "major": {
-                   "enum": [ "Math", "English", "Computer Science", "History", None ],
-                   "description": "can only be one of the enum values and is required"
-                },
-                "gpa": {
-                   # In case you might want to allow doubles OR int, then add
-                   # "int" to the bsonType array below:
-                   "bsonType": [ "double" ],
-                   "minimum": 0,
-                   "description": "must be a double and is required"
+                "title": {
+                    "bsonType": 'string'
                 }
-
-'''
+            }
+        }
+    }
+    
 
 
 def setup_test_data():
-    raise NotImplementedError()
+    for name in ["members", "books", "physical_books"]:
+        db[name].drop()
+    members = [{"_id": 1, "name": "Ada", "email": "ada@spam.com"},
+               {"_id": 2, "name": "Bob", "email": "bob@spam.com"},
+               {"_id": 3, "name": "Cecil", "email": "cecil@spam.com"},
+               {"_id": 4, "name": "Dee", "email": "dee@spam.com"}
+    ]
+    db.members.insert_many(members)
+    books = [
+        {"_id": 1,
+            "title": "Lord of the Rings",
+            "author": "J.R.R Tolkien",
+            "genre": "Fantasy",
+            "copies": 3,
+            "reviews": [{"member_id": 1, "rating": 5, "review_text": "Loved it!"}]
+            #"reviews": [{1: (5, "Loved it!")}]
+        },
+        {"_id": 2,
+            "title": "Daggerspell",
+            "author": "Katherine Kerr",
+            "genre": "Fantasy",
+            "copies": 1,
+            "reviews": []
+            #"reviews": [{2: (3, "Intriguing")}]
+        },
+        {"_id": 3,
+            "title": "2001: A Space Odyssey",
+            "author": "Arthur C. Clarke",
+            "genre": "Science Fiction",
+            "copies": 1,
+            "reviews": []
+            #"reviews": [{3: (2, "Feels a bit dated")}]
+        }
+    ]
+    db.books.insert_many(books)
+    physical_books = [
+        {"_id": 1,
+         "book_id": 1,
+         "loan": [{"member_id": 1, "loan_date": datetime(2026, 6, 1), "return_date": datetime(2026, 6, 15)}]},
+        {"_id": 2,
+         "book_id": 1,
+         "loan": []},
+        {"_id": 3,
+         "book_id": 1,
+         "loan": [{"member_id": 2, "loan_date": datetime(2026, 10, 12), "return_date": None}]},
+        {"_id": 4,
+         "book_id": 2,
+         "loan": [{"member_id": 2, "loan_date": datetime(2026, 6, 5), "return_date": datetime(2026, 6, 18)}]},
+        {"_id": 5,
+         "book_id": 3,
+         "loan": [{"member_id": 3, "loan_date": datetime(2026, 6, 17), "return_date": datetime(2026, 6, 24)},
+                  {"member_id": 4, "loan_date": datetime(2026, 10, 13), "return_date": None}]}
+    ]
+    db.physical_books.insert_many(physical_books)
 
 def book_search():
     raise NotImplementedError()
