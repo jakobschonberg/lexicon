@@ -35,23 +35,26 @@ menu = {1:("Quit", "my_quit"),
         }
 
 def schema_validation():
-    members_vexpr =  {"$jsonSchema":
-        {
-            "bsonType": "object",
-            "required": ["name", "email"],
+    members_vexpr =  {
+        "$jsonSchema": {
+            "bsonType": 'object',
+            "required": [
+                '_id',
+                'email',
+                'name'
+            ],
             "properties": {
-                "name": {
-                   "bsonType": "string",
-                   "description": "must be a string and is required"
+                "_id": {
+                    "bsonType": 'int'
                 },
                 "email": {
-                   "bsonType": "string",
-                   "description": "must be a string and is required"
+                    "bsonType": 'string'
+                },
+                "name": {
+                    "bsonType": 'string'
                 }
             }
-        },
-        "validationLevel": "strict",
-        "validationAction": "error"
+        }
     }
 
     books_vexpr = { "$jsonSchema": {
@@ -105,7 +108,49 @@ def schema_validation():
             }
         }
     }
-    
+
+    physical_books_vexpr = {"$jsonSchema": {
+            "bsonType": 'object',
+            "required": [
+                '_id',
+                'book_id',
+                'loan'
+            ],
+            "properties": {
+                "_id": {
+                    "bsonType": 'int'
+                },
+                "book_id": {
+                    "bsonType": 'int'
+                },
+                "loan": {
+                    "bsonType": 'array',
+                    "items": {
+                        "bsonType": 'object',
+                        "properties": {
+                            "loan_date": {
+                                "bsonType": 'date'
+                            },
+                            "member_id": {
+                                "bsonType": 'int'
+                            },
+                            "return_date": {
+                                "bsonType": [
+                                    'date',
+                                    'null'
+                                ]
+                            }
+                        },
+                        "required": [
+                            'loan_date',
+                            'member_id',
+                            'return_date'
+                        ]
+                    }
+                }
+            }
+        }
+    }
 
 
 def setup_test_data():
