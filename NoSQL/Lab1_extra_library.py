@@ -24,15 +24,15 @@ physical_books:   --each book can have multiple copies that can be lent out/retu
 def my_quit():
     pass
 
-menu = {1:("Quit", "my_quit"),
-        2:("Schema Validation", "schema_validation"),
-        3:("Create test data", "setup_test_data"),
-        4:("Search for book", "book_search"),
-        5:("Loan book","loan_book"),
-        6:("Return book","return_book"),
-        7:("Show members", "show_members"),
-        8:("Show overdue books", "show_overdue_books")
-        }
+menu = {
+    1:("Quit", "my_quit"),
+    2:("Reset collections with test data and Schema Validation", "setup_test_data"),
+    3:("Search for book", "book_search"),
+    4:("Loan book","loan_book"),
+    5:("Return book","return_book"),
+    6:("Show members", "show_members"),
+    7:("Show overdue books", "show_overdue_books")
+}
 
 def schema_validation():
     members_vexpr =  {
@@ -152,11 +152,18 @@ def schema_validation():
             }
         }
     }
+    try:
+        db.create_collection("members", validator=members_vexpr)
+        db.create_collection("books", validator=books_vexpr)
+        db.create_collection("physical_books", validator=physical_books_vexpr)
+    except Exception as e:
+        print(e)
 
 
 def setup_test_data():
     for name in ["members", "books", "physical_books"]:
         db[name].drop()
+    schema_validation()
     members = [{"_id": 1, "name": "Ada", "email": "ada@spam.com"},
                {"_id": 2, "name": "Bob", "email": "bob@spam.com"},
                {"_id": 3, "name": "Cecil", "email": "cecil@spam.com"},
@@ -170,23 +177,20 @@ def setup_test_data():
             "genre": "Fantasy",
             "copies": 3,
             "reviews": [{"member_id": 1, "rating": 5, "review_text": "Loved it!"}]
-            #"reviews": [{1: (5, "Loved it!")}]
         },
         {"_id": 2,
             "title": "Daggerspell",
             "author": "Katherine Kerr",
             "genre": "Fantasy",
             "copies": 1,
-            "reviews": []
-            #"reviews": [{2: (3, "Intriguing")}]
+            "reviews": [{"member_id": 2, "rating": 3, "review_text": "Intriguing"}]
         },
         {"_id": 3,
             "title": "2001: A Space Odyssey",
             "author": "Arthur C. Clarke",
             "genre": "Science Fiction",
             "copies": 1,
-            "reviews": []
-            #"reviews": [{3: (2, "Feels a bit dated")}]
+            "reviews": [{"member_id": 1, "rating": 2, "review_text": "Felt a bit dated"}]
         }
     ]
     db.books.insert_many(books)
