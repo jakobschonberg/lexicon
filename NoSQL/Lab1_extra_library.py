@@ -224,7 +224,12 @@ def book_search():
     for book in db.books.find({"$or": [{"title":{"$regex": search}},{"author":{"$regex": search}},{"genre":{"$regex": search}}]}):
         print("title:",book["title"],"author:", book["author"], "genre:", book["genre"])
     wait()
-    
+
+def has_overdue_books(member_id):
+    return db.physical_books.count_documents({"loan": {"member_id": member_id, "loan_date": {"$lt": datetime.now() - timedelta(days=14)}, "return_date": {"$eq":  None}}}) > 0
+
+def has_too_many_books(member_id):
+    return db.physical_books.count_documents({"loan": {"member_id": member_id, "return_date": {"$eq":  None}}}) >= 3
 
 def loan_book():
     try:
@@ -234,6 +239,14 @@ def loan_book():
             wait()
             return
         member = db.members.find_one({"_id": member_id})
+        if has_overdue_books(member_id):
+            print(f"{member["name"]} cannot loan more books due to overdue loan, return any overdue books first")
+            wait()
+            return
+        if has_too_many_books(member_id):
+            print(f"{member["name"]} already has 3 books on loan, return one book first")
+            wait()
+            return
         search = input("Enter part or whole of Title or Author or Genre: ")
         books = db.books.find({"$or": [{"title":{"$regex": search}},{"author":{"$regex": search}},{"genre":{"$regex": search}}]})
         if (len(list(books)) == 1):
@@ -253,15 +266,24 @@ def loan_book():
             else:
                 print("No copies available right now")
                 wait()
-        elif (len(list(books)) > 1):
-            print("Ambigous, more than one book found")
+        else:
+            print("No exact book found, please be more precise")
             wait()
     except Exception as e:
         print("Error:", e)
         wait()
 
 def return_book():
-    raise NotImplementedError()
+    try:
+        physical_book_id = int(input("unique id of book to return (physical_book._id): "))
+        physical_book = db.physical_books.find_one({"_id": physical_book_id, "loan.return_date": {"$eq":  None}})
+        if physical_book:
+            db.physical_books.update_one({"_id": physical_book_id}, {"$set": {'loan.$[x].return_date': datetime.now()}},array_filters=[{"x.return_date": {"$eq": None}}])
+            print("book returned")
+            wait()
+    except Exception as e:
+        print("Error:", e)
+        wait()
 
 def show_members():
     raise NotImplementedError()
