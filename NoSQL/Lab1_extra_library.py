@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from msvcrt import getch
 from pymongo import MongoClient
 client = MongoClient("mongodb://localhost:27017/")
@@ -24,6 +24,10 @@ physical_books:   --each book can have multiple copies that can be lent out/retu
 
 def my_quit():
     pass
+
+def wait():
+    print("--continue--")
+    getch()
 
 menu = {
     1:("Quit", "my_quit"),
@@ -219,11 +223,42 @@ def book_search():
     search = input("Enter part or whole of Title or Author or Genre: ")
     for book in db.books.find({"$or": [{"title":{"$regex": search}},{"author":{"$regex": search}},{"genre":{"$regex": search}}]}):
         print("title:",book["title"],"author:", book["author"], "genre:", book["genre"])
-    print("--continue--")
-    getch() #wait
+    wait()
+    
 
 def loan_book():
-    raise NotImplementedError()
+    try:
+        member_id = int(input("Enter member id: "))
+        if not db.members.count_documents({"_id": member_id}):
+            print("Invalid member id")
+            wait()
+            return
+        member = db.members.find_one({"_id": member_id})
+        search = input("Enter part or whole of Title or Author or Genre: ")
+        books = db.books.find({"$or": [{"title":{"$regex": search}},{"author":{"$regex": search}},{"genre":{"$regex": search}}]})
+        if (len(list(books)) == 1):
+            book = db.books.find_one({"$or": [{"title":{"$regex": search}},{"author":{"$regex": search}},{"genre":{"$regex": search}}]})
+            physical_book = db.physical_books.find_one({"book_id": book["_id"], "loan.return_date": {"$ne":  None}})
+            if physical_book:
+                confirm = input(f'Lend {book["title"]} to {member["name"]} (y/n)? ')
+                if confirm.lower() == 'y' or confirm.lower() == 'yes':
+                    db.physical_books.update_one({"_id": physical_book["_id"]},
+                                                {"$push": {"loan": {"member_id": member["_id"],
+                                                                    "loan_date": datetime.now(),
+                                                                    "return_date": None}}})
+                    print(f'{member["name"]} lent {book["title"]}')                
+                    return_date = datetime.now() + timedelta(days=14)
+                    print(f'Please return at latest: {return_date.strftime("%Y-%m-%d")}')
+                    wait()
+            else:
+                print("No copies available right now")
+                wait()
+        elif (len(list(books)) > 1):
+            print("Ambigous, more than one book found")
+            wait()
+    except Exception as e:
+        print("Error:", e)
+        wait()
 
 def return_book():
     raise NotImplementedError()
