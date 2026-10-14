@@ -1,4 +1,5 @@
 from datetime import datetime
+from msvcrt import getch
 from pymongo import MongoClient
 client = MongoClient("mongodb://localhost:27017/")
 db = client["library"]
@@ -215,7 +216,11 @@ def setup_test_data():
     db.physical_books.insert_many(physical_books)
 
 def book_search():
-    raise NotImplementedError()
+    search = input("Enter part or whole of Title or Author or Genre: ")
+    for book in db.books.find({"$or": [{"title":{"$regex": search}},{"author":{"$regex": search}},{"genre":{"$regex": search}}]}):
+        print("title:",book["title"],"author:", book["author"], "genre:", book["genre"])
+    print("--continue--")
+    getch() #wait
 
 def loan_book():
     raise NotImplementedError()
