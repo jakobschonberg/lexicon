@@ -184,7 +184,8 @@ def setup_test_data():
             "author": "J.R.R Tolkien",
             "genre": "Fantasy",
             "copies": 3,
-            "reviews": [{"member_id": 1, "rating": 5, "review_text": "Loved it!"}]
+            "reviews": [{"member_id": 1, "rating": 5, "review_text": "Loved it!"},
+                        {"member_id": 4, "rating": 4, "review_text": "Epic"}]
         },
         {"_id": 2,
             "title": "Daggerspell",
@@ -205,7 +206,8 @@ def setup_test_data():
     physical_books = [
         {"_id": 1,
          "book_id": 1,
-         "loan": [{"member_id": 1, "loan_date": datetime(2026, 6, 1), "return_date": datetime(2026, 6, 15)}]},
+         "loan": [{"member_id": 1, "loan_date": datetime(2026, 6, 1), "return_date": datetime(2026, 6, 15)},
+                  {"member_id": 1, "loan_date": datetime(2026, 8, 6), "return_date": datetime(2026, 8, 20)}]},
         {"_id": 2,
          "book_id": 1,
          "loan": []},
@@ -324,7 +326,8 @@ def show_overdue_books():
 
 def show_most_loaned():
     result = db.physical_books.aggregate([{"$group": {"_id": "$book_id", "count": {"$sum": {"$size": "$loan"}}}},
-                                          {"$sort": {"count": -1}}])    
+                                          {"$sort": {"count": -1}},
+                                          {"$limit": 10}])    
     for r in result:
         book = db.books.find_one({"_id": r["_id"]})
         loaned_string = f'{book["title"]:<25} loaned: {r["count"]} time'
@@ -334,7 +337,13 @@ def show_most_loaned():
     wait()
 
 def show_average_ratings():
-    raise NotImplementedError()
+    book_ratings = db.books.aggregate([{"$project": {"title": "$title", "avg_rating": {"$avg": "$reviews.rating"}}},
+                                          {"$sort": {"avg_rating": -1}},
+                                          {"$limit": 10}])    
+    for book in book_ratings:
+        print(f'{book["title"]:<25} average rating: {book["avg_rating"]}')
+    wait()
+
 
 def main():
     choice = None
