@@ -37,7 +37,9 @@ menu = {
     4:("Loan book","loan_book"),
     5:("Return book","return_book"),
     6:("Show members", "show_members"),
-    7:("Show overdue books", "show_overdue_books")
+    7:("Show overdue books", "show_overdue_books"),
+    8:("Show most loaned books", "show_most_loaned"),
+    9:("Show average rating of books","show_average_ratings")
 }
 
 def schema_validation():
@@ -305,19 +307,34 @@ def return_book():
         wait()
 
 def show_members():
-    raise NotImplementedError()
+    for member in db.members.find({}):
+        print(f'{member["_id"]:<2} {member["name"]:<10} {member["email"]}')
+    wait()
+    
 
 def show_overdue_books():
-    for physical_book in db.physical_books.find({"loan": {"$elemMatch": {"loaloan_date": {"$lt": datetime.now() - timedelta(days=14)}, "return_date": {"$eq":  None}}}}):
-        print("pb", physical_book)
-        book = db.books.find_one({"_id": physical_book["book_id"]})
-        print("b", book)
+    for physical_book in db.physical_books.find({"loan": {"$elemMatch": {"loan_date": {"$lt": datetime.now() - timedelta(days=14)}, "return_date": {"$eq":  None}}}}):
+        book = db.books.find_one({"_id": physical_book["book_id"]})        
         for loan in physical_book["loan"]:
             if not loan["return_date"]:
                 member_id = loan["member_id"]
                 member = db.members.find_one({"_id": member_id})
-                print(f'{book["title"]} loaned {loan["loan_date"]} by {member["name"]}')
+                print(f'{book["title"]} loaned {loan["loan_date"].strftime('%Y-%m-%d')} by {member["name"]}')
     wait()
+
+def show_most_loaned():
+    result = db.physical_books.aggregate([{"$group": {"_id": "$book_id", "count": {"$sum": {"$size": "$loan"}}}},
+                                          {"$sort": {"count": -1}}])    
+    for r in result:
+        book = db.books.find_one({"_id": r["_id"]})
+        loaned_string = f'{book["title"]:<25} loaned: {r["count"]} time'
+        if r["count"] != 1:
+            loaned_string += "s"
+        print(loaned_string)
+    wait()
+
+def show_average_ratings():
+    raise NotImplementedError()
 
 def main():
     choice = None
