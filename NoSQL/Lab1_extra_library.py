@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from msvcrt import getch
 from pymongo import MongoClient
+from mongosanitizer.sanitizer import sanitize
 client = MongoClient("mongodb://localhost:27017/")
 db = client["library"]
 '''
@@ -220,7 +221,7 @@ def setup_test_data():
     db.physical_books.insert_many(physical_books)
 
 def book_search():
-    search = input("Enter part or whole of Title or Author or Genre: ")
+    search = sanitize(input("Enter part or whole of Title or Author or Genre: "))
     for book in db.books.find({"$or": [{"title":{"$regex": search}},{"author":{"$regex": search}},{"genre":{"$regex": search}}]}):
         print("title:",book["title"],"author:", book["author"], "genre:", book["genre"])
     wait()
@@ -229,7 +230,7 @@ def has_overdue_books(member_id):
     return db.physical_books.count_documents({"loan": {"$elemMatch": {"member_id": member_id, "loan_date": {"$lt": datetime.now() - timedelta(days=14)}, "return_date": {"$eq":  None}}}}) > 0
 
 def has_too_many_books(member_id):
-    return db.physical_books.count_documents({"loan": {"member_id": member_id, "return_date": {"$eq":  None}}}) >= 3
+    return db.physical_books.count_documents({"loan": {"$elemMatch": {"member_id": member_id, "return_date": {"$eq":  None}}}}) >= 3
 
 def loan_book():
     try:
@@ -247,7 +248,7 @@ def loan_book():
             print(f"{member["name"]} already has 3 books on loan, return one book first")
             wait()
             return
-        search = input("Enter part or whole of Title or Author or Genre: ")
+        search = sanitize(input("Enter part or whole of Title or Author or Genre: "))
         books = db.books.find({"$or": [{"title":{"$regex": search}},{"author":{"$regex": search}},{"genre":{"$regex": search}}]})
         if (len(list(books)) == 1):
             book = db.books.find_one({"$or": [{"title":{"$regex": search}},{"author":{"$regex": search}},{"genre":{"$regex": search}}]})
@@ -293,7 +294,7 @@ def return_book():
                             rating = None
                     except Exception as e:
                         None
-                review = input("(Optional): Write a review: ")
+                review = sanitize(input("(Optional): Write a review: "))
                 db.books.update_one({"_id": physical_book["book_id"]}, {"$push": {"reviews": {"member_id": member_id,
                                                                     "rating": rating,
                                                                     "review_text": review}}})
@@ -307,7 +308,7 @@ def show_members():
     raise NotImplementedError()
 
 def show_overdue_books():
-    for physical_book in db.physical_books.find({"loan": {"loaloan_date": {"$lt": datetime.now() - timedelta(days=14)}, "return_date": {"$eq":  None}}}):
+    for physical_book in db.physical_books.find({"loan": {"$elemMatch": {"loaloan_date": {"$lt": datetime.now() - timedelta(days=14)}, "return_date": {"$eq":  None}}}}):
         print("pb", physical_book)
         book = db.books.find_one({"_id": physical_book["book_id"]})
         print("b", book)
