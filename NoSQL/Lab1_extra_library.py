@@ -208,7 +208,7 @@ def setup_test_data():
          "loan": []},
         {"_id": 3,
          "book_id": 1,
-         "loan": [{"member_id": 2, "loan_date": datetime(2026, 10, 12), "return_date": None}]},
+         "loan": [{"member_id": 2, "loan_date": datetime(2026, 9, 12), "return_date": None}]},
         {"_id": 4,
          "book_id": 2,
          "loan": [{"member_id": 2, "loan_date": datetime(2026, 6, 5), "return_date": datetime(2026, 6, 18)}]},
@@ -226,7 +226,7 @@ def book_search():
     wait()
 
 def has_overdue_books(member_id):
-    return db.physical_books.count_documents({"loan": {"member_id": member_id, "loan_date": {"$lt": datetime.now() - timedelta(days=14)}, "return_date": {"$eq":  None}}}) > 0
+    return db.physical_books.count_documents({"loan": {"$elemMatch": {"member_id": member_id, "loan_date": {"$lt": datetime.now() - timedelta(days=14)}, "return_date": {"$eq":  None}}}}) > 0
 
 def has_too_many_books(member_id):
     return db.physical_books.count_documents({"loan": {"member_id": member_id, "return_date": {"$eq":  None}}}) >= 3
@@ -240,7 +240,7 @@ def loan_book():
             return
         member = db.members.find_one({"_id": member_id})
         if has_overdue_books(member_id):
-            print(f"{member["name"]} cannot loan more books due to overdue loan, return any overdue books first")
+            print(f"{member["name"]} cannot loan more books due to an overdue loan, return the overdue book first")
             wait()
             return
         if has_too_many_books(member_id):
@@ -259,7 +259,7 @@ def loan_book():
                                                 {"$push": {"loan": {"member_id": member["_id"],
                                                                     "loan_date": datetime.now(),
                                                                     "return_date": None}}})
-                    print(f'{member["name"]} lent {book["title"]}')                
+                    print(f'{member["name"]} lent {book["title"]} physical_book_id: {physical_book["_id"]}')                
                     return_date = datetime.now() + timedelta(days=14)
                     print(f'Please return at latest: {return_date.strftime("%Y-%m-%d")}')
                     wait()
@@ -278,9 +278,27 @@ def return_book():
         physical_book_id = int(input("unique id of book to return (physical_book._id): "))
         physical_book = db.physical_books.find_one({"_id": physical_book_id, "loan.return_date": {"$eq":  None}})
         if physical_book:
+            member_id = None
+            for loan in physical_book["loan"]:
+                if loan["return_date"] == None:
+                    member_id = loan["member_id"]
             db.physical_books.update_one({"_id": physical_book_id}, {"$set": {'loan.$[x].return_date': datetime.now()}},array_filters=[{"x.return_date": {"$eq": None}}])
-            print("book returned")
-            wait()
+            confirm = input("book returned, would you like to leave a rating and/or a review (y/n) ?")
+            if confirm.lower() == 'y' or confirm.lower() == 'yes':
+                rating = None
+                while rating is None:
+                    try:
+                        rating = int(input("Please rate the book with an integer from 1 to 5: "))
+                        if (rating < 1 or rating > 5):
+                            rating = None
+                    except Exception as e:
+                        None
+                review = input("(Optional): Write a review: ")
+                db.books.update_one({"_id": physical_book["book_id"]}, {"$push": {"reviews": {"member_id": member_id,
+                                                                    "rating": rating,
+                                                                    "review_text": review}}})
+                print("Review stored")
+                wait()
     except Exception as e:
         print("Error:", e)
         wait()
@@ -289,7 +307,16 @@ def show_members():
     raise NotImplementedError()
 
 def show_overdue_books():
-    raise NotImplementedError()
+    for physical_book in db.physical_books.find({"loan": {"loaloan_date": {"$lt": datetime.now() - timedelta(days=14)}, "return_date": {"$eq":  None}}}):
+        print("pb", physical_book)
+        book = db.books.find_one({"_id": physical_book["book_id"]})
+        print("b", book)
+        for loan in physical_book["loan"]:
+            if not loan["return_date"]:
+                member_id = loan["member_id"]
+                member = db.members.find_one({"_id": member_id})
+                print(f'{book["title"]} loaned {loan["loan_date"]} by {member["name"]}')
+    wait()
 
 def main():
     choice = None
