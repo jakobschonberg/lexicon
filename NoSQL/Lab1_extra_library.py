@@ -23,21 +23,6 @@ physical_books:   --each book can have multiple copies that can be lent out/retu
     }
 '''
 
-'''
-TODO:
-break out reviews into its own document (can grow endlessy)
-'''
-'''
-noSQL pipeline commands:
-    $match - WHERE
-    $group - GROUP BY
-    $sort  - ORDER BY
-    $project - SELECT
-    $unwind - One document per array item (collection gets split up into more documents)
-    $lookup - Fetch matching documents from another collection (compare SQL JOIN)
-'''
-
-
 def sanitize(s: str):
     r = str(sub('[{}$"\']', '', s))
     return r
@@ -91,8 +76,7 @@ def schema_validation():
             '_id',
             'author',
             'copies',
-            'genre',
-            'reviews',
+            'genre',            
             'title'
             ],
             "properties": {
@@ -108,29 +92,36 @@ def schema_validation():
                 "genre": {
                     "bsonType": 'string'
                 },
-                "reviews": {
-                    "bsonType": 'array',
-                    "items": {
-                    "bsonType": 'object',
-                    "properties": {
-                        "member_id": {
-                        "bsonType": 'int'
-                        },
-                        "rating": {
-                        "bsonType": 'int'
-                        },
-                        "review_text": {
-                        "bsonType": 'string'
-                        }
-                    },
-                    "required": [
-                        'member_id',
-                        'rating',
-                        'review_text'
-                    ]
-                    }
-                },
                 "title": {
+                    "bsonType": 'string'
+                }
+            }
+        }
+    }
+
+    reviews_vexpr = {"$jsonSchema": {
+            "bsonType": 'object',            
+            "required": [
+                '_id',
+                'book_id',
+                'member_id',
+                'rating',
+                'review_text'
+            ],
+            "properties": {
+                "_id": {
+                    "bsonType": 'ObjectId'
+                },
+                "book_id": {
+                    "bsonType": 'int'
+                },
+                "member_id": {
+                    "bsonType": 'int'
+                },
+                "rating": {
+                    "bsonType": 'int'
+                },
+                "review_text": {
                     "bsonType": 'string'
                 }
             }
@@ -182,13 +173,14 @@ def schema_validation():
     try:
         db.create_collection("members", validator=members_vexpr)
         db.create_collection("books", validator=books_vexpr)
+        db.create_collection("reviews", validator=reviews_vexpr)
         db.create_collection("physical_books", validator=physical_books_vexpr)
     except Exception as e:
         print(e)
 
 
 def setup_test_data():
-    for name in ["members", "books", "physical_books"]:
+    for name in ["members", "books", "reviews", "physical_books"]:
         db[name].drop()
     schema_validation()
     members = [{"_id": 1, "name": "Ada", "email": "ada@spam.com"},
@@ -202,26 +194,49 @@ def setup_test_data():
             "title": "Lord of the Rings",
             "author": "J.R.R Tolkien",
             "genre": "Fantasy",
-            "copies": 3,
-            "reviews": [{"member_id": 1, "rating": 5, "review_text": "Loved it!"},
-                        {"member_id": 4, "rating": 4, "review_text": "Epic"}]
+            "copies": 3
         },
         {"_id": 2,
             "title": "Daggerspell",
             "author": "Katherine Kerr",
             "genre": "Fantasy",
-            "copies": 1,
-            "reviews": [{"member_id": 2, "rating": 3, "review_text": "Intriguing"}]
+            "copies": 1
         },
         {"_id": 3,
             "title": "2001: A Space Odyssey",
             "author": "Arthur C. Clarke",
             "genre": "Science Fiction",
-            "copies": 1,
-            "reviews": [{"member_id": 1, "rating": 2, "review_text": "Felt a bit dated"}]
+            "copies": 1
         }
     ]
     db.books.insert_many(books)
+    reviws = [
+        {
+            "book_id": 1,
+            "member_id": 1,
+            "rating": 5,
+            "review_text": "Loved it!"
+        },
+        {
+            "book_id": 1,
+            "member_id": 4,
+            "rating": 4,
+            "review_text": "Epic"
+        },
+        {
+            "book_id": 2,
+            "member_id": 2,
+            "rating": 3,
+            "review_text": "Intriguing"
+        },  
+        {
+            "book_id": 3,
+            "member_id": 1,
+            "rating": 2,
+            "review_text": "Felt a bit dated"
+        }
+    ]
+    db.reviews.insert_many(reviws)
     physical_books = [
         {"_id": 1,
          "book_id": 1,
@@ -318,9 +333,7 @@ def return_book():
                     except Exception as e:
                         None
                 review = sanitize(input("(Optional): Write a review: "))
-                db.books.update_one({"_id": physical_book["book_id"]}, {"$push": {"reviews": {"member_id": member_id,
-                                                                    "rating": rating,
-                                                                    "review_text": review}}})
+                db.reviews.insert_one({"book_id": physical_book["book_id"], "member_id": member_id, "rating": rating, "review_text": review})
                 print("Review stored")
                 wait()
     except Exception as e:
@@ -356,11 +369,15 @@ def show_most_loaned():
     wait()
 
 def show_average_ratings():
-    book_ratings = db.books.aggregate([{"$project": {"title": "$title", "avg_rating": {"$avg": "$reviews.rating"}}},
+    book_ratings = db.reviews.aggregate([{"$lookup": {"from": "books", "localField": "book_id", "foreignField": "_id", "as": "book"}},
+                                         {"$group": {"_id": "$book_id",
+                                                     "title": {"$first": "$book.title"},
+                                                     "avg_rating": {"$avg": "$rating"}}},
                                           {"$sort": {"avg_rating": -1}},
-                                          {"$limit": 10}])    
-    for book in book_ratings:
-        print(f'{book["title"]:<25} average rating: {book["avg_rating"]}')
+                                          {"$limit": 10}])
+    
+    for b in book_ratings:
+        print(f'{b["title"][0]:<25} average rating: {b["avg_rating"]}')
     wait()
 
 
