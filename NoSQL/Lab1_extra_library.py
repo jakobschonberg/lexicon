@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from msvcrt import getch
+from re import sub
 from pymongo import MongoClient
-from mongosanitizer.sanitizer import sanitize
 client = MongoClient("mongodb://localhost:27017/")
 db = client["library"]
 '''
@@ -22,6 +22,25 @@ physical_books:   --each book can have multiple copies that can be lent out/retu
     "loan" (list containing member_id who lent it?, loaned date and returned date) -- in case a book is damamged it might be valuable to know not just who lent the book last
     }
 '''
+
+'''
+TODO:
+break out reviews into its own document (can grow endlessy)
+'''
+'''
+noSQL pipeline commands:
+    $match - WHERE
+    $group - GROUP BY
+    $sort  - ORDER BY
+    $project - SELECT
+    $unwind - One document per array item (collection gets split up into more documents)
+    $lookup - Fetch matching documents from another collection (compare SQL JOIN)
+'''
+
+
+def sanitize(s: str):
+    r = str(sub('[{}$"\']', '', s))
+    return r
 
 def my_quit():
     pass
