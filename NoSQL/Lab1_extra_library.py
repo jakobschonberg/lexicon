@@ -377,7 +377,7 @@ def show_average_ratings():
                                           {"$limit": 10}])
     
     for b in book_ratings:
-        print(f'{b["title"][0]:<25} average rating: {b["avg_rating"]}')
+        print(f'{b["title"][0]:<25} average rating: {b["avg_rating"]:.1f}')
     wait()
 
 
