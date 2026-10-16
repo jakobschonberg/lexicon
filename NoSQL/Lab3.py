@@ -153,3 +153,11 @@ except Exception as e:
     print("Unable to connect to MongoDB")
 
 #14
+'''
+ALl fields. Although some fields by themselves do not say much, in combination with other fields
+it might say more than it would without the field.
+When a customer is deleted, the orders remain. Since only customer_id is kept, a minimum
+of personal data is kept. Orders can technically be deleted after a set number of years if laws allow it, but not before that.
+Copying personal data into the order is not adviced, since orders have to be kept for years, it makes cleaning up personal data more difficult.
+Is the gain of speed absolutely needed? And if so do we correctly clean up all personal data if a customer wants to be deleted?
+'''
