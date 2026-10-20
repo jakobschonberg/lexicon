@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 from pathlib import Path
 from os import getenv, path
@@ -23,10 +23,10 @@ filename = 'movies.json'
 
 def load_movies():
     movies = [
-        {"id": 1, "title": "Big Trouble In Little China", "director": "John Carpenter", "year": 1986},
-        {"id": 2, "title": "Monty Python and the Holy Grail", "director": "Terry Gilliam, Terry Jones", "year": 1975},
-        {"id": 3, "title": "The Lord of the Rings: The Fellowship of the Ring", "director": "Peter Jackson", "year": 2001},
-        {"id": 4, "title": "Conan the Barbarian", "director": "John Milius", "year": 1982}]
+        {"id": 1, "title": "Big Trouble In Little China", "director": "John Carpenter", "year": 1986, "rating": 0},
+        {"id": 2, "title": "Monty Python and the Holy Grail", "director": "Terry Gilliam, Terry Jones", "year": 1975, "rating": 0},
+        {"id": 3, "title": "The Lord of the Rings: The Fellowship of the Ring", "director": "Peter Jackson", "year": 2001, "rating": 0},
+        {"id": 4, "title": "Conan the Barbarian", "director": "John Milius", "year": 1982, "rating": 0}]
 
     if path.isfile(filename):
         with open(filename) as f:
@@ -64,14 +64,15 @@ def get_movies(director: str = None, year: int = None):
 
 #4
 class Movie(BaseModel):
-    title: str
-    director: str
-    year: int
+    title: str = Field(min_length=1, max_length=100)
+    director: str = Field(max_length=100)
+    year: int = Field(ge=1888, le=2100)
+    rating: float = Field(default= 0, ge=0, le=10)
 
 @app.post("/movies", status_code=201, dependencies=[Depends(check_key)])
 def create_book(movie: Movie):
     new_id = max([m["id"] for m in movies], default=0) + 1
-    new_movie = {'id': new_id, 'title': movie.title, 'director': movie.director, 'year': movie.year}
+    new_movie = {'id': new_id, 'title': movie.title, 'director': movie.director, 'year': movie.year, 'rating': movie.rating}
     movies.append(new_movie)
     save_movies()
     return new_movie
@@ -89,6 +90,7 @@ def replace_movie(movie_id: int, movie: Movie):
     existing["title"] = movie.title
     existing["director"] = movie.director
     existing["year"] = movie.year
+    existing["rating"] = movie.rating
     save_movies()
     return existing
 
@@ -106,10 +108,13 @@ class MovieUpdate(BaseModel):
     title: str | None = None
     director: str | None = None
     year: int | None = None
+    rating: int | None = None
 
 @app.patch("/movies/{movie_id}", dependencies=[Depends(check_key)])
 def patch_movie(movie_id: int, movie_update: MovieUpdate):
     movie = find_movie(movie_id)
+    if movie_update.title is None
+
     movie.update(movie_update.model_dump(exclude_unset=True))
     save_movies()
     return movie
