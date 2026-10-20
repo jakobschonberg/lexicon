@@ -1,23 +1,37 @@
 from api_client import get_json
 import json
-from os import path
+from os import path, remove
 from datetime import datetime, timedelta
+from time import sleep
 
 #1, #2
 def get_wheather(city):
     filename = "response.json"
     data = ""
-    resoponse = {}
+    response = {}
+
+    '''
+    import subprocess
+    from subprocess import check_output, STDOUT, CalledProcessError
+    cmd = 'wmic datafile where name="C:\\\\Users\\\\Public\\\\test.txt" get creationdate | findstr /brc:[0-9]'
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+    (out, err) = proc.communicate()
+    print( "program output:", out.decode().rstrip())
+    '20210113222350.636280+060'
+    '''
+
+
     if path.isfile(filename) and datetime.fromtimestamp(path.getctime(filename)) + timedelta(minutes=10) > datetime.now():
-        with open(filename, 'w+') as f:
-            f.write(data)
-            print("Data: ", data)
+        with open(filename) as f:
+            data = json.load(f)
+            print(data)
     else:
-        if path.isfile(filename):
+        if path.isfile(filename):       
             print(datetime.fromtimestamp(path.getctime(filename)))
             print(datetime.fromtimestamp(path.getctime(filename)) + timedelta(minutes=10))
+            remove(filename)
+            sleep(0.2)
         print(datetime.now())
-        return
     cached_data = next((x for x in data if city.lower() == x["name"].lower()), None)
     if(cached_data):
         cache_list = []
