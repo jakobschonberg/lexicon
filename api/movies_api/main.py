@@ -2,8 +2,9 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from pathlib import Path
-from os import getenv
+from os import getenv, path
 from fastapi import Header, Depends
+from json import load, dump
 
 #part 3
 #2
@@ -18,13 +19,25 @@ def check_key(x_api_key: str | None = Header(default=None)):
 #part 1
 #1
 app = FastAPI()
+filename = 'movies.json'
 
-movies = [
-    {"id": 1, "title": "Big Trouble In Little China", "director": "John Carpenter", "year": 1986},
-    {"id": 2, "title": "Monty Python and the Holy Grail", "director": "Terry Gilliam, Terry Jones", "year": 1975},
-    {"id": 3, "title": "The Lord of the Rings: The Fellowship of the Ring", "director": "Peter Jackson", "year": 2001},
-    {"id": 4, "title": "Conan the Barbarian", "director": "John Milius", "year": 1982}
-]
+def load_movies():
+    movies = [
+        {"id": 1, "title": "Big Trouble In Little China", "director": "John Carpenter", "year": 1986},
+        {"id": 2, "title": "Monty Python and the Holy Grail", "director": "Terry Gilliam, Terry Jones", "year": 1975},
+        {"id": 3, "title": "The Lord of the Rings: The Fellowship of the Ring", "director": "Peter Jackson", "year": 2001},
+        {"id": 4, "title": "Conan the Barbarian", "director": "John Milius", "year": 1982}]
+
+    if path.isfile(filename):
+        with open(filename) as f:
+            movies = load(f)
+    return movies
+
+def save_movies():
+    with open(filename, "w") as fp:
+            dump(movies, fp)
+
+movies = load_movies()
 
 #@app.get("/movies")
 #def get_movies():
@@ -60,6 +73,7 @@ def create_book(movie: Movie):
     new_id = max([m["id"] for m in movies], default=0) + 1
     new_movie = {'id': new_id, 'title': movie.title, 'director': movie.director, 'year': movie.year}
     movies.append(new_movie)
+    save_movies()
     return new_movie
 
 #5
@@ -75,12 +89,14 @@ def replace_movie(movie_id: int, movie: Movie):
     existing["title"] = movie.title
     existing["director"] = movie.director
     existing["year"] = movie.year
+    save_movies()
     return existing
 
 @app.delete("/movies/{movie_id}", status_code=204, dependencies=[Depends(check_key)])
 def delete_movie(movie_id: int):
     movie = find_movie(movie_id)
     movies.remove(movie)
+    save_movies()
 
 #deleting same twice: 404 movie not found
 
@@ -95,6 +111,7 @@ class MovieUpdate(BaseModel):
 def patch_movie(movie_id: int, movie_update: MovieUpdate):
     movie = find_movie(movie_id)
     movie.update(movie_update.model_dump(exclude_unset=True))
+    save_movies()
     return movie
 
 #2
@@ -115,6 +132,23 @@ PATCH replaces only the given fields, useful if some existing movie needs one or
 #post without key = 401
 #post with key = 201
 #post with one wrong character = 401
+
+#part 4
+#4
+'''
+If two people write to the file at same time, it is possible that it transpires in order of:
+1) person 1 reads all movies
+2) person 2 reads all movies
+3) person 1 changes something and writes all movies to file
+4) person 2 changes something and writes all moves to file (but the changes from person 1 gets lost since person 2 didn't re-read the movies before saving it)
+In reality you could for example queue changes rather than overwriting whole database and have server handle merging the data.
+Alternatively you can have some sort of database lock, so to write data you first have to:
+1) lock the database against writing for all except the current thread
+2) read the data you are about to update
+3) make the update and write the updated data
+4) release the lock
+In this case person 2 would not write data until the write from person 1 was complete and their lock released.
+'''
 
 
 

@@ -3,3 +3,4 @@ pythonFundamentals/Project/__pycache__/
 api/__pycache__/
 api/response.json
 api/movies_api/__pycache__/
+api/movies_api/movies.json
