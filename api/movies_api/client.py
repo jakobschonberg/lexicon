@@ -1,6 +1,11 @@
 from api_client import get_json
 import requests
+from dotenv import load_dotenv
+from pathlib import Path
+from os import getenv
 
+
+#part1
 #6
 BASE = 'http://127.0.0.1:8000'
 movies = get_json(f"{BASE}/movies")
@@ -14,3 +19,15 @@ new_movie = {"title": "Avengers: Doomsday",
 
 response = requests.post(f"{BASE}/movies", json=new_movie, timeout=5)
 print(response.status_code, response.json())
+
+#part3
+#6
+load_dotenv(dotenv_path=Path('../../.venv/.env'))
+API_KEY = getenv("API_KEY")
+response = requests.post(f"{BASE}/movies", json=new_movie, timeout=5, headers={"X-API-Key": API_KEY})
+print(response.status_code, response.json())
+#401 without the api-key
+#201 with the api-key
+
+#7
+#.env is not in the list = we're good
