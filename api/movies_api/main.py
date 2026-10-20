@@ -68,3 +68,29 @@ def delete_movie(movie_id: int):
     movies.remove(movie)
 
 #deleting same twice: 404 movie not found
+
+#Part 2
+#1
+class MovieUpdate(BaseModel):
+    title: str | None = None
+    director: str | None = None
+    year: int | None = None
+
+@app.patch("/movies/{movie_id}")
+def patch_movie(movie_id: int, movie_update: MovieUpdate):
+    movie = find_movie(movie_id)
+    movie.update(movie_update.model_dump(exclude_unset=True))
+    return movie
+
+#2
+#ok
+
+#3
+#empty body = 200 ok (but no changes)
+#id that does not exist = 404
+
+#4
+'''
+PUT replaces the whole movie.
+PATCH replaces only the given fields, useful if some existing movie needs one or more fields updated.
+'''
