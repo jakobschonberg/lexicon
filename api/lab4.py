@@ -10,28 +10,15 @@ def get_wheather(city):
     data = ""
     response = {}
 
-    '''
-    import subprocess
-    from subprocess import check_output, STDOUT, CalledProcessError
-    cmd = 'wmic datafile where name="C:\\\\Users\\\\Public\\\\test.txt" get creationdate | findstr /brc:[0-9]'
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
-    (out, err) = proc.communicate()
-    print( "program output:", out.decode().rstrip())
-    '20210113222350.636280+060'
-    '''
-
-
     if path.isfile(filename) and datetime.fromtimestamp(path.getctime(filename)) + timedelta(minutes=10) > datetime.now():
         with open(filename) as f:
             data = json.load(f)
-            print(data)
     else:
         if path.isfile(filename):       
-            print(datetime.fromtimestamp(path.getctime(filename)))
-            print(datetime.fromtimestamp(path.getctime(filename)) + timedelta(minutes=10))
             remove(filename)
-            sleep(0.2)
-        print(datetime.now())
+            sleep(30)
+            #getctime bugs out if we don't sleep a long time before creating the file again. By bugging out I mean, it doesn't recognize the new file creation date and istead gives us the old creation date
+            #possible workaround is getting the creation date by running the command dir or ls from windows shell and parsing the result
     cached_data = next((x for x in data if city.lower() == x["name"].lower()), None)
     if(cached_data):
         cache_list = []
