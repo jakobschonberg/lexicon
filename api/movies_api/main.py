@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Query, Path as FastApiPath
 from pydantic import BaseModel, Field
 from pydantic.types import StringConstraints
-from typing import Annotated
+from typing import Annotated, Literal
 from dotenv import load_dotenv
 from pathlib import Path as pathlibPath
 from os import getenv, path as osPath
@@ -47,6 +47,11 @@ movies = load_movies()
 #def get_movies():
 #    return movies
 
+def lowercase(obj):
+    if type(obj) is str:
+        return obj.lower()
+    return obj
+
 #2
 @app.get("/movies/{movie_id}")
 def get_movie(movie_id: int = FastApiPath(gt=0)):
@@ -58,14 +63,17 @@ def get_movie(movie_id: int = FastApiPath(gt=0)):
 #3
 @app.get("/movies")
 def get_movies(director: str | None = Query(default=None, min_length=2),
-               year: int | None = Query(default = None, ge=1888, le=2100)):    
+               year: int | None = Query(default = None, ge=1888, le=2100),
+               sort_by: Literal["title", "year", "director"] = "title",
+               order: Literal["asc", "desc"] = "asc"):
+    rmovies = movies
     if director and year:
-        return [movie for movie in movies if director.lower() in movie["director"].lower() and movie["year"] == year]
-    if director:
-        return [movie for movie in movies if director.lower() in movie["director"].lower()]
-    if year:
-        return [movie for movie in movies if movie["year"] == year]
-    return movies
+        rmovies = [movie for movie in movies if director.lower() in movie["director"].lower() and movie["year"] == year]
+    elif director:
+        rmovies = [movie for movie in movies if director.lower() in movie["director"].lower()]
+    elif year:
+        rmovies = [movie for movie in movies if movie["year"] == year]
+    return sorted(rmovies, key=lambda m: lowercase(m[sort_by]), reverse=(order == "desc"))
 
 #4
 class Movie(BaseModel):
@@ -185,3 +193,6 @@ In this case person 2 would not write data until the write from person 1 was com
 
 #2.4
 #In docs it says maximum: 2100 minimum: 1888 right under the input field
+
+#3.3
+#422 "type":"literal_error" 'msg': "Input should be 'title', 'year' or 'director'"
