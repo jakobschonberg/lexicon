@@ -1,10 +1,14 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
+from pydantic.types import StringConstraints
+from typing import Annotated
 from dotenv import load_dotenv
 from pathlib import Path
 from os import getenv, path
 from fastapi import Header, Depends
 from json import load, dump
+
+#uv run fastapi dev
 
 #part 3
 #2
@@ -64,13 +68,27 @@ def get_movies(director: str = None, year: int = None):
 
 #4
 class Movie(BaseModel):
-    title: str = Field(min_length=1, max_length=100)
-    director: str = Field(max_length=100)
+    title: Annotated[str, StringConstraints(strip_whitespace=True), Field(min_length=1, max_length=100)]    
+    director: Annotated[str, StringConstraints(strip_whitespace=True), Field(max_length=100)]
     year: int = Field(ge=1888, le=2100)
     rating: float = Field(default= 0, ge=0, le=10)
 
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "title": "Pulp Fiction",
+                    "director": "Quentin Tarantino",
+                    "year": 1994,
+                    "rating": 8.8
+                }
+            ]
+        }
+    }
+
+
 @app.post("/movies", status_code=201, dependencies=[Depends(check_key)])
-def create_book(movie: Movie):
+def create_movie(movie: Movie):
     new_id = max([m["id"] for m in movies], default=0) + 1
     new_movie = {'id': new_id, 'title': movie.title, 'director': movie.director, 'year': movie.year, 'rating': movie.rating}
     movies.append(new_movie)
@@ -105,16 +123,14 @@ def delete_movie(movie_id: int):
 #Part 2
 #1
 class MovieUpdate(BaseModel):
-    title: str | None = None
-    director: str | None = None
-    year: int | None = None
-    rating: int | None = None
+    title: str | None = Field(default=None, min_length=1, max_length=100)
+    director: str | None = Field(default=None, max_length=100)
+    year: int | None = Field(default=None, ge=1888, le=2100)
+    rating: int | None = Field(default=None, ge=0, le=10)
 
 @app.patch("/movies/{movie_id}", dependencies=[Depends(check_key)])
 def patch_movie(movie_id: int, movie_update: MovieUpdate):
     movie = find_movie(movie_id)
-    if movie_update.title is None
-
     movie.update(movie_update.model_dump(exclude_unset=True))
     save_movies()
     return movie
@@ -155,5 +171,8 @@ Alternatively you can have some sort of database lock, so to write data you firs
 In this case person 2 would not write data until the write from person 1 was complete and their lock released.
 '''
 
+#Extra
+#1.3
+#loc[1] and msg both seem like relevant information to show user
 
 
