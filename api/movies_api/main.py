@@ -64,8 +64,11 @@ def get_movie(movie_id: int = FastApiPath(gt=0)):
 @app.get("/movies")
 def get_movies(director: str | None = Query(default=None, min_length=2),
                year: int | None = Query(default = None, ge=1888, le=2100),
+               title: str | None = Query(default = None),
                sort_by: Literal["title", "year", "director"] = "title",
-               order: Literal["asc", "desc"] = "asc"):
+               order: Literal["asc", "desc"] = "asc",
+               limit: int = Query(default=10, ge=1, le=100),
+               offset: int = Query(default=0, ge=0)):
     rmovies = movies
     if director and year:
         rmovies = [movie for movie in movies if director.lower() in movie["director"].lower() and movie["year"] == year]
@@ -73,7 +76,12 @@ def get_movies(director: str | None = Query(default=None, min_length=2),
         rmovies = [movie for movie in movies if director.lower() in movie["director"].lower()]
     elif year:
         rmovies = [movie for movie in movies if movie["year"] == year]
-    return sorted(rmovies, key=lambda m: lowercase(m[sort_by]), reverse=(order == "desc"))
+    if title:
+        rmovies = [movie for movie in movies if title.lower() in movie["title"].lower()]
+    sorted_movies = sorted(rmovies, key=lambda m: lowercase(m[sort_by]), reverse=(order == "desc"))
+    total = len(sorted_movies)
+    page = sorted_movies[offset:offset + limit]
+    return {"total": total, "limit": limit, "offset": offset, "movies": page}
 
 #4
 class Movie(BaseModel):
@@ -196,3 +204,6 @@ In this case person 2 would not write data until the write from person 1 was com
 
 #3.3
 #422 "type":"literal_error" 'msg': "Input should be 'title', 'year' or 'director'"
+
+#4.3
+#every case is as expected, offset 100 gets empty list as expected since we have less than 100 movies
