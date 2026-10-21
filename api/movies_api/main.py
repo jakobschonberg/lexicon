@@ -1,10 +1,10 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query, Path as FastApiPath
 from pydantic import BaseModel, Field
 from pydantic.types import StringConstraints
 from typing import Annotated
 from dotenv import load_dotenv
-from pathlib import Path
-from os import getenv, path
+from pathlib import Path as pathlibPath
+from os import getenv, path as osPath
 from fastapi import Header, Depends
 from json import load, dump
 
@@ -12,7 +12,7 @@ from json import load, dump
 
 #part 3
 #2
-load_dotenv(dotenv_path=Path('../../.venv/.env'))
+load_dotenv(dotenv_path=pathlibPath('../../.venv/.env'))
 API_KEY = getenv("API_KEY")
 #3
 def check_key(x_api_key: str | None = Header(default=None)):
@@ -32,7 +32,7 @@ def load_movies():
         {"id": 3, "title": "The Lord of the Rings: The Fellowship of the Ring", "director": "Peter Jackson", "year": 2001, "rating": 0},
         {"id": 4, "title": "Conan the Barbarian", "director": "John Milius", "year": 1982, "rating": 0}]
 
-    if path.isfile(filename):
+    if osPath.isfile(filename):
         with open(filename) as f:
             movies = load(f)
     return movies
@@ -49,7 +49,7 @@ movies = load_movies()
 
 #2
 @app.get("/movies/{movie_id}")
-def get_movie(movie_id: int):
+def get_movie(movie_id: int = FastApiPath(gt=0)):
     movie = next((movie for movie in movies if movie["id"] == movie_id), None)
     if movie:
         return movie
@@ -57,7 +57,8 @@ def get_movie(movie_id: int):
 
 #3
 @app.get("/movies")
-def get_movies(director: str = None, year: int = None):    
+def get_movies(director: str | None = Query(default=None, min_length=2),
+               year: int | None = Query(default = None, ge=1888, le=2100)):    
     if director and year:
         return [movie for movie in movies if director.lower() in movie["director"].lower() and movie["year"] == year]
     if director:
@@ -103,7 +104,7 @@ def find_movie(movie_id: int):
     raise HTTPException(status_code=404, detail="movie not found")
 
 @app.put("/movies/{movie_id}", dependencies=[Depends(check_key)])
-def replace_movie(movie_id: int, movie: Movie):
+def replace_movie(movie: Movie, movie_id: int = FastApiPath(gt=0)):
     existing = find_movie(movie_id)
     existing["title"] = movie.title
     existing["director"] = movie.director
@@ -113,7 +114,7 @@ def replace_movie(movie_id: int, movie: Movie):
     return existing
 
 @app.delete("/movies/{movie_id}", status_code=204, dependencies=[Depends(check_key)])
-def delete_movie(movie_id: int):
+def delete_movie(movie_id: int = FastApiPath(gt=0)):
     movie = find_movie(movie_id)
     movies.remove(movie)
     save_movies()
@@ -129,7 +130,7 @@ class MovieUpdate(BaseModel):
     rating: int | None = Field(default=None, ge=0, le=10)
 
 @app.patch("/movies/{movie_id}", dependencies=[Depends(check_key)])
-def patch_movie(movie_id: int, movie_update: MovieUpdate):
+def patch_movie(movie_update: MovieUpdate, movie_id: int = FastApiPath(gt=0)):
     movie = find_movie(movie_id)
     movie.update(movie_update.model_dump(exclude_unset=True))
     save_movies()
@@ -175,4 +176,12 @@ In this case person 2 would not write data until the write from person 1 was com
 #1.3
 #loc[1] and msg both seem like relevant information to show user
 
+#2.2
+#movies/0 and movies/1 are not permitted values so they give 422, while movies/999 is permitted, but we don't have a movie_id 999 in the database (yet) so it gives 404
 
+#2.3
+#422. Year = 1500 says: "Input should be greater than or equal to 1888"
+#year = abc says: "Input should be a valid integer, unable to parse string as an integer"
+
+#2.4
+#In docs it says maximum: 2100 minimum: 1888 right under the input field
