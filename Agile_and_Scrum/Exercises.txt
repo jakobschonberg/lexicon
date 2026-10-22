@@ -1,0 +1,67 @@
+1.1
+With the waterfall method, no feedback or little feedback is recieved before the final product is shipped.
+Which could either mean you develop features that were not needed and or the final product doesn't meet the needs.
+Mistakes are discovered late, meaning correcting mistakes is more costly.
+
+1.2
+* Working software over comprehensive documentation:
+    Make sure your code works before writing comprehensive documentation.
+    Comment your code when it feels needed, but don't overdo the documentation part (especially when your code isn't final yet).
+
+* Responding to change over following a plan.
+    When developing a feature, new problems may arise that nobody thought about during the planning phase.
+    The orginal plan is where you started from, but it doesn't need to be where you end up. Just make sure that you properly discuss changes
+    and that everyone involved agrees and understands the changes.
+ 
+ 1.3
+ a - Product Owner
+ b - Developers
+ c - Scrum Master
+ d - Product Owner
+ e - Scrum Master
+
+ 1.4
+The feature request is put in the backlog.
+
+1.5
+The sprint review is about the code that was produced, about the work that was actually done. Does it work, does it do what it's supposed to do?
+While the retrospective is about the work methods used to get the work done. Do we need to change how we work to be more efficient?
+
+1.6
+a:
+As a shop owner
+I want to add user logins
+so that I can keep track of who bought what
+b:
+As a shop owner
+I want to be able to export orders to Excel
+so that I don't have to make excel sheets manually
+c:
+As a customer
+I want the option to see the website in Dark mode
+so that my eyes don't hurt from the bright screen
+
+1.7
+* Customer can see their order history
+* Customer can't see anyone else's order history
+* Customer can place a repeat order of a previous order, by as few clicks as possible
+
+1.8
+* Code is Working
+* Tests are Working
+* Code passes said Tests
+* Product owner is satisfied with the functionality of the new feature
+* Code Reviews are finished
+
+1.9
+* Scrum should not be about reporting to a boss.
+* Everyone involved in a scrum should work together, if a boss is present, they are there as a participant, not as a boss.
+* 45 minutes is way too long, the people talking the most need to seriously cut down on how much they talk.
+
+1.10
+a: Scrum (best for building new things)
+b: Kanban (best for responding fast to tasks)
+c: Probably Kanban, but possibly a mix of the two... depends on the situation and how complex the bugs are (best for responding fast to tasks, since the webshop is already live, less discussions should be needed about what the code should do, it's just a matter of making sure everything works)
+
+1.11
+Discuss why the project might be a 2-3 and why it might be a 13.
