@@ -4,7 +4,8 @@ api/__pycache__/
 api/response.json
 api/movies_api/__pycache__/
 api/movies_api/movies.json
-Data_Analysis_Visualization/data/listings.csv
+Data_Analysis_Visualization/data
 Data_Analysis_Visualization/demo.ipynb
 Data_Analysis_Visualization/test.ipynb
 Data_Analysis_Visualization/demo2.ipynb
+Data_Analysis_Visualization/demo3.ipynb
